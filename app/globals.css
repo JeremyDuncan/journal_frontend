@@ -31,3 +31,10 @@ body {
     text-wrap: balance;
   }
 }
+
+
+/* quill-custom.css */
+.ql-editor {
+  font-size: 28px;
+  min-height: 400px;
+}

@@ -8,13 +8,28 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.white'),
+            h1: { color: theme('colors.white') },
+            h2: { color: theme('colors.white') },
+            h3: { color: theme('colors.white') },
+            h4: { color: theme('colors.white') },
+            h5: { color: theme('colors.white') },
+            h6: { color: theme('colors.white') },
+            strong: { color: theme('colors.white') },
+            a: { color: theme('colors.white') },
+            blockquote: { color: theme('colors.white') },
+            'ol > li::before': { color: theme('colors.white') },
+            'ul > li::before': { backgroundColor: theme('colors.white') },
+            code: { color: theme('colors.white') },
+            figcaption: { color: theme('colors.white') },
+          },
+        },
+      }),
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography'),],
 };
 export default config;
