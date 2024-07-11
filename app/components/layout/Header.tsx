@@ -8,6 +8,7 @@ const Header = () => {
                 <ul className="flex space-x-4">
                     <li><Link href={"/"} className="hover:text-gray-400">Home</Link></li>
                     <li><Link href={"/calendar"} className="hover:text-gray-400">Calendar</Link></li>
+                    <li><Link href={"/tags"} className="hover:text-gray-400">Tags</Link></li>
                 </ul>
                 <Link
                     href={"/posts/new"}
