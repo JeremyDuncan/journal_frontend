@@ -94,70 +94,89 @@ const TagsPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-4xl font-bold mb-8">Tags</h1>
-            <div className="mb-4">
-                <input
-                    type="text"
-                    placeholder="Tag name"
-                    value={newTagName}
-                    onChange={(e) => setNewTagName(e.target.value)}
-                    className="border p-2 mr-2 text-black"
-                />
-                <select
-                    value={selectedTagType}
-                    onChange={(e) => setSelectedTagType(e.target.value)}
-                    className="border p-2 mr-2 text-black"
-                >
-                    {tagTypes.map((type) => (
-                        <option key={type.id} value={type.name}>
-                            {type.name}
-                        </option>
+            <br/>
+            <div className={"tag-box bg-gray-500"}>
+                <h2 className="text-3xl font-bold mb-4 text-red">Tags</h2>
+                <div className="flex flex-col space-y-4 bg-gray-400 tag-box">
+                    {tags.map((tag) => (
+                        <div key={tag.id} className="border-b pb-2 flex justify-between items-center no-round">
+                            <div className="flex-grow flex justify-between items-center ">
+                                <span className="text-xl">{tag.name}</span>
+                                <span className="text-gray-500 ml-4">{tag.tag_type.name}</span>
+                            </div>
+                            <button
+                                onClick={() => handleDeleteTag(tag.id)}
+                                className="bg-red-500 text-white p-2 ml-2"
+                            >
+                                Delete
+                            </button>
+                        </div>
                     ))}
-                </select>
-                <button onClick={handleCreateTag} className="bg-blue-500 text-white p-2">
-                    Create Tag
-                </button>
+                </div>
             </div>
-            <div className="mb-8">
-                <input
-                    type="text"
-                    placeholder="Tag type name"
-                    value={newTagTypeName}
-                    onChange={(e) => setNewTagTypeName(e.target.value)}
-                    className="border p-2 mr-2 text-black"
-                />
-                <button onClick={handleCreateTagType} className="bg-green-500 text-white p-2">
-                    Create Tag Type
-                </button>
+
+            <br/>
+            <div className={"tag-box bg-gray-500"}>
+                <h2 className="text-3xl font-bold mb-4">Tag Types</h2>
+                <div className="flex flex-col bg-gray-400 tag-box">
+                    {tagTypes.map((tagType) => (
+                        <div key={tagType.id} className="border-b pb-2 flex justify-between items-center no-round">
+                            <span className="text-xl flex-grow">{tagType.name}</span>
+                            <button
+                                onClick={() => handleDeleteTagType(tagType.id)}
+                                className="bg-red-500 text-white p-2 ml-2"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <ul className="space-y-4">
-                {tags.map((tag) => (
-                    <li key={tag.id} className="border-b pb-2 flex justify-between items-center">
-                        <span className="text-xl">{tag.name}</span>
-                        <span className="text-gray-500">{tag.tag_type.name}</span>
-                        <button
-                            onClick={() => handleDeleteTag(tag.id)}
-                            className="bg-red-500 text-white p-2 ml-2"
+
+
+            {/*################################## CREATE TAGS AND TYPES #############################################*/}
+            <div className="mt-16  border-t tag-create-box bg-gray-800">
+                <p className="text-xl text-center"> Create Tags and Tag Types</p>
+                <div className="flex flex-row mt-2 gap-8 justify-center">
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Tag name"
+                            value={newTagName}
+                            onChange={(e) => setNewTagName(e.target.value)}
+                            className="border p-2 mr-2 text-black"
+                        />
+                        <select
+                            value={selectedTagType}
+                            onChange={(e) => setSelectedTagType(e.target.value)}
+                            className="border p-2 mr-2 text-black"
                         >
-                            Delete
+                            {tagTypes.map((type) => (
+                                <option key={type.id} value={type.name}>
+                                    {type.name}
+                                </option>
+                            ))}
+                        </select>
+                        <button onClick={handleCreateTag} className="bg-blue-500 text-white p-2">
+                            Create Tag
                         </button>
-                    </li>
-                ))}
-            </ul>
-            <h2 className="text-3xl font-bold mt-8 mb-4">Tag Types</h2>
-            <ul className="space-y-4">
-                {tagTypes.map((tagType) => (
-                    <li key={tagType.id} className="border-b pb-2 flex justify-between items-center">
-                        <span className="text-xl">{tagType.name}</span>
-                        <button
-                            onClick={() => handleDeleteTagType(tagType.id)}
-                            className="bg-red-500 text-white p-2 ml-2"
-                        >
-                            Delete
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Tag type name"
+                            value={newTagTypeName}
+                            onChange={(e) => setNewTagTypeName(e.target.value)}
+                            className="border p-2 mr-2 text-black"
+                        />
+                        <button onClick={handleCreateTagType} className="bg-green-500 text-white p-2">
+                            Create Tag Type
                         </button>
-                    </li>
-                ))}
-            </ul>
+                    </div>
+                </div>
+            </div>
+
+
             {error && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg">
