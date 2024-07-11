@@ -103,6 +103,14 @@ body {
       }
     }
   }
+
+  .react-calendar__month-view__weekdays {
+    font-size: 1.4rem;
+    padding: 0 0 4px 4px;
+    abbr {
+      text-decoration: none;
+    }
+  }
 }
 
 .post-list {
