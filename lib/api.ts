@@ -30,6 +30,25 @@ export async function fetchPost(id: string) {
     const data = await res.json();
     return data;
 }
+export async function deletePost(id: string) {
+    const res = await fetch(`${API_URL}/posts/${id}`, {
+        method: 'DELETE',
+    });
+
+    if (!res.ok) {
+        throw new Error(`Failed to delete post: ${res.statusText}`);
+    }
+
+    // Only attempt to parse JSON if there is a body
+    if (res.status !== 204) {
+        return res.json();
+    }
+
+    return null;
+}
+
+
+
 export async function fetchTags() {
     const res = await fetch(`${API_URL}/tags`);
     if (!res.ok) {

@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { fetchPost } from '@/lib/api';
+import { useParams, useRouter } from 'next/navigation';
+import { fetchPost, deletePost } from '@/lib/api';
 import { Post } from '@/lib/types';
 import DOMPurify from 'dompurify';
 
 export default function PostPage() {
     const { id } = useParams();
+    const router = useRouter();
     const [post, setPost] = useState<Post | null>(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         if (id && id !== "new") {
@@ -34,6 +36,15 @@ export default function PostPage() {
 
     const sanitizedContent = DOMPurify.sanitize(post.content);
 
+    const handleDelete = async () => {
+        try {
+            await deletePost(id as string);
+            router.push('/');
+        } catch (error) {
+            console.error('Failed to delete post:', error);
+        }
+    };
+
     return (
         <div className="container mx-auto p-4">
             {post.tags && post.tags.length > 0 && (
@@ -53,6 +64,34 @@ export default function PostPage() {
                 <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
             </div>
             <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
+            <button
+                onClick={() => setShowModal(true)}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"
+            >
+                Delete Post
+            </button>
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-4 rounded shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+                        <p  className="text-black">Are you sure you want to delete this post?</p>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
