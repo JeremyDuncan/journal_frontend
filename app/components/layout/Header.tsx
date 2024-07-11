@@ -7,6 +7,7 @@ const Header = () => {
             <nav className="container mx-auto flex justify-between items-center">
                 <ul className="flex space-x-4">
                     <li><Link href={"/"} className="hover:text-gray-400">Home</Link></li>
+                    <li><Link href={"/calendar"} className="hover:text-gray-400">Calendar</Link></li>
                     <li><Link href={"/about"} className="hover:text-gray-400">About</Link></li>
                     <li><Link href={"/posts/new"} className="hover:text-gray-400">New Post</Link></li>
                 </ul>

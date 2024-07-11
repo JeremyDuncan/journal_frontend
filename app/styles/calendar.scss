@@ -1,0 +1,170 @@
+@import 'variables';
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $background-color;
+  color: $text-color;
+
+  main {
+    flex: 1;
+  }
+}
+
+.react-calendar {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: $background-color;
+  color: $text-color;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+
+  &__tile {
+    position: relative;
+    background-color: $background-hover-color;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    height: 13vh;
+    overflow: hidden;
+    color: $text-color;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    &--now {
+      background: $primary-color;
+      color: $link-hover-color;
+
+      &:hover,
+      &:focus {
+        background: $primary-hover-color;
+        color: $link-hover-color;
+      }
+    }
+
+    &--active {
+      background: $primary-hover-color;
+      color: $link-hover-color;
+
+      &:hover,
+      &:focus {
+        background: $primary-active-color;
+        color: $link-hover-color;
+      }
+    }
+
+    &--neighboringMonth {
+      background-color: $neighboring-month-background-color;
+      color: $neighboring-month-text-color;
+    }
+  }
+
+  &__navigation {
+    display: flex;
+    justify-content: center;
+
+    &__label {
+      font-size: 1.4rem;
+      border-radius: 8px;
+      margin-bottom: 12px;
+
+      &:hover {
+        background-color: $background-hover-color;
+        color: #84bef1;
+      }
+    }
+
+    &__arrow {
+      font-size: 2.4rem;
+    }
+
+    &__prev-button,
+    &__prev2-button,
+    &__next-button,
+    &__next2-button {
+      background-color: $background-color;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+
+      &:hover {
+        background-color: $background-hover-color;
+        color: $link-hover-color;
+      }
+    }
+  }
+
+  &__viewContainer {
+    & > .react-calendar__year-view {
+      & > .react-calendar__year-view__months {
+        & > .react-calendar__year-view__months__month:hover {
+          background-color: $background-hover-color;
+        }
+      }
+    }
+  }
+}
+
+.post-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.75rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  li {
+    margin-bottom: 0.25rem;
+    padding: 0 0.5rem;
+
+    a {
+      color: $link-color;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 6px;
+
+      &:hover {
+        text-decoration: underline;
+        color: $link-hover-color;
+      }
+    }
+  }
+}
+
+body > main > div > div > div > div {
+  border-radius: 20px;
+  padding: 10px 20px 20px 20px;
+}
+
+// Sets Date Number to top right
+.react-calendar__tile abbr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  font-size: 1.5rem;
+}
+
+// Center the date numbers within each calendar tile
+.react-calendar__viewContainer > div > div > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  abbr {
+    position: static; // Remove the absolute positioning
+    padding: 0;       // Reset padding
+    font-size: 1rem;  // Adjust font size as needed
+  }
+}
+
+// Styling for days not part of the current month
+.react-calendar__month-view__days__day--neighboringMonth {
+  background-color: $neighboring-month-background-color;
+  color: $neighboring-month-text-color;
+}

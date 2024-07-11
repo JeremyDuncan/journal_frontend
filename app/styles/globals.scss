@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import './calendar';
+
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -38,3 +40,4 @@ body {
   font-size: 28px;
   min-height: 400px;
 }
+
