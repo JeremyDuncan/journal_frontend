@@ -50,7 +50,7 @@ const CalendarView: React.FC<CalendarProps> = () => {
     return (
         <div className="flex-grow flex justify-center items-center">
             <div className="w-full h-full p-4">
-                <h1 className="text-4xl font-bold mb-8 text-center text-white">Blog Post Calendar</h1>
+                <h1 className="text-3xl font-bold mb-4 text-center text-white">Blog Post Calendar</h1>
                 <div className="bg-gray-900 shadow-lg rounded-lg p-4 h-full">
                     <Calendar
                         tileContent={tileContent}
