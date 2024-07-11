@@ -10,6 +10,7 @@ const TagsPage: React.FC = () => {
     const [newTagName, setNewTagName] = useState<string>('');
     const [selectedTagType, setSelectedTagType] = useState<string>('default');
     const [newTagTypeName, setNewTagTypeName] = useState<string>('');
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         async function loadTags() {
@@ -20,6 +21,7 @@ const TagsPage: React.FC = () => {
                 setTagTypes(tagTypes);
             } catch (error) {
                 console.error('Failed to load tags or tag types:', error);
+                setError('Failed to load tags or tag types.');
             }
         }
         loadTags();
@@ -28,7 +30,7 @@ const TagsPage: React.FC = () => {
     const handleCreateTag = async () => {
         console.log('Creating tag with name:', newTagName, 'and type:', selectedTagType);
         if (!newTagName.trim()) {
-            console.error('Tag name cannot be empty');
+            setError('Tag name cannot be empty');
             return;
         }
 
@@ -37,15 +39,17 @@ const TagsPage: React.FC = () => {
             setTags([...tags, newTag]);
             setNewTagName('');
             setSelectedTagType('default');
+            setError(null);
         } catch (error) {
             console.error('Failed to create tag:', error);
+            setError('Failed to create tag. It might already exist.');
         }
     };
 
     const handleCreateTagType = async () => {
         console.log('Creating tag type with name:', newTagTypeName);
         if (!newTagTypeName.trim()) {
-            console.error('Tag type name cannot be empty');
+            setError('Tag type name cannot be empty');
             return;
         }
 
@@ -53,8 +57,10 @@ const TagsPage: React.FC = () => {
             const newTagType = await createTagType(newTagTypeName);
             setTagTypes([...tagTypes, newTagType]);
             setNewTagTypeName('');
+            setError(null);
         } catch (error) {
             console.error('Failed to create tag type:', error);
+            setError('Failed to create tag type. It might already exist.');
         }
     };
 
@@ -63,8 +69,10 @@ const TagsPage: React.FC = () => {
         try {
             await deleteTag(tagId);
             setTags(tags.filter(tag => tag.id !== tagId));
+            setError(null);
         } catch (error) {
             console.error('Failed to delete tag:', error);
+            setError('Failed to delete tag. It might be associated with other resources.');
         }
     };
 
@@ -73,9 +81,15 @@ const TagsPage: React.FC = () => {
         try {
             await deleteTagType(tagTypeId);
             setTagTypes(tagTypes.filter(tagType => tagType.id !== tagTypeId));
+            setError(null);
         } catch (error) {
             console.error('Failed to delete tag type:', error);
+            setError('Failed to delete tag type. It might be associated with existing tags.');
         }
+    };
+
+    const closeModal = () => {
+        setError(null);
     };
 
     return (
@@ -87,12 +101,12 @@ const TagsPage: React.FC = () => {
                     placeholder="Tag name"
                     value={newTagName}
                     onChange={(e) => setNewTagName(e.target.value)}
-                    className="border p-2 mr-2"
+                    className="border p-2 mr-2 text-black"
                 />
                 <select
                     value={selectedTagType}
                     onChange={(e) => setSelectedTagType(e.target.value)}
-                    className="border p-2 mr-2"
+                    className="border p-2 mr-2 text-black"
                 >
                     {tagTypes.map((type) => (
                         <option key={type.id} value={type.name}>
@@ -110,7 +124,7 @@ const TagsPage: React.FC = () => {
                     placeholder="Tag type name"
                     value={newTagTypeName}
                     onChange={(e) => setNewTagTypeName(e.target.value)}
-                    className="border p-2 mr-2"
+                    className="border p-2 mr-2 text-black"
                 />
                 <button onClick={handleCreateTagType} className="bg-green-500 text-white p-2">
                     Create Tag Type
@@ -144,6 +158,17 @@ const TagsPage: React.FC = () => {
                     </li>
                 ))}
             </ul>
+            {error && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-4 rounded shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">Error</h2>
+                        <p className="text-black">{error}</p>
+                        <button onClick={closeModal} className="mt-4 bg-blue-500 text-white p-2 rounded">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
