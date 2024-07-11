@@ -1,7 +1,6 @@
-// app/posts/new/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
@@ -32,7 +31,25 @@ const formats = [
 export default function NewPost() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [tags, setTags] = useState<string[]>([]);
+    const [newTag, setNewTag] = useState('');
+    const [tagType, setTagType] = useState('');
+    const [existingTags, setExistingTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const router = useRouter();
+
+    useEffect(() => {
+        async function fetchTags() {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tags`);
+                const data = await res.json();
+                setExistingTags(data.map((tag: any) => tag.name));
+            } catch (error) {
+                console.error('Failed to fetch tags:', error);
+            }
+        }
+        fetchTags();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,7 +59,7 @@ export default function NewPost() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ title, content }),
+                body: JSON.stringify({ title, content, tags: selectedTags, newTag, tagType }),
             });
 
             if (!res.ok) {
@@ -54,6 +71,14 @@ export default function NewPost() {
         } catch (error) {
             console.error('Failed to create post:', error);
         }
+    };
+
+    const handleTagSelection = (tag: string) => {
+        setSelectedTags((prevSelectedTags) =>
+            prevSelectedTags.includes(tag)
+                ? prevSelectedTags.filter((t) => t !== tag)
+                : [...prevSelectedTags, tag]
+        );
     };
 
     return (
@@ -82,8 +107,52 @@ export default function NewPost() {
                         onChange={setContent}
                         modules={modules}
                         formats={formats}
-                        className="bg-white text-black "
+                        className="bg-white text-black"
                     />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-white text-sm font-bold mb-2" htmlFor="newTag">
+                        New Tag (optional)
+                    </label>
+                    <input
+                        id="newTag"
+                        type="text"
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-white text-sm font-bold mb-2" htmlFor="tagType">
+                        Tag Type (optional)
+                    </label>
+                    <input
+                        id="tagType"
+                        type="text"
+                        value={tagType}
+                        onChange={(e) => setTagType(e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-white text-sm font-bold mb-2">
+                        Select Existing Tags
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                        {existingTags.map((tag) => (
+                            <div key={tag} className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id={tag}
+                                    value={tag}
+                                    checked={selectedTags.includes(tag)}
+                                    onChange={() => handleTagSelection(tag)}
+                                    className="mr-2"
+                                />
+                                <label htmlFor={tag} className="text-white">{tag}</label>
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <button
                     type="submit"

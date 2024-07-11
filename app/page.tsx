@@ -52,6 +52,18 @@ export default function Home() {
                             {post.title}
                         </Link>
                         <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>
+                        {post.tags && post.tags.length > 0 && (
+                            <div className="mt-2">
+                                <span className="font-bold text-gray-700">Tags:</span>
+                                <ul className="flex flex-wrap gap-2 mt-1">
+                                    {post.tags.map((tag) => (
+                                        <li key={tag.id} className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                                            {tag.name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </li>
                 ))}
             </ul>
