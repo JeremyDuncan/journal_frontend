@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -9,19 +8,36 @@ import { format } from 'date-fns';
 
 export default function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         async function getPosts() {
             try {
-                const posts = await fetchPosts();
-                console.log('API posts => ', posts);
-                setPosts(posts);
+                const response = await fetchPosts(undefined, undefined, page, 5);
+                console.log('API response => ', response);
+                if (Array.isArray(response.posts)) {
+                    setPosts(response.posts);
+                    setTotalPages(response.total_pages);
+                }
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
             }
         }
         getPosts();
-    }, []);
+    }, [page]);
+
+    const handleNextPage = () => {
+        if (page < totalPages) {
+            setPage(prevPage => prevPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (page > 1) {
+            setPage(prevPage => prevPage - 1);
+        }
+    };
 
     return (
         <div className="container mx-auto p-4">
@@ -39,6 +55,22 @@ export default function Home() {
                     </li>
                 ))}
             </ul>
+            <div className="flex justify-between mt-4">
+                <button
+                    onClick={handlePreviousPage}
+                    disabled={page === 1}
+                    className="text-blue-500 hover:underline disabled:text-gray-400"
+                >
+                    Previous
+                </button>
+                <button
+                    onClick={handleNextPage}
+                    disabled={page >= totalPages}
+                    className="text-blue-500 hover:underline disabled:text-gray-400"
+                >
+                    Next
+                </button>
+            </div>
         </div>
     );
 }

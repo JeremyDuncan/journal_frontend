@@ -1,4 +1,3 @@
-// app/calendar/CalendarView.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -6,24 +5,32 @@ import Calendar, { CalendarProps } from 'react-calendar';
 import { fetchPosts } from '@/lib/api';
 import Link from 'next/link';
 import { Post } from '@/lib/types';
-import { isSameDay, parseISO } from 'date-fns';
+import { isSameDay, parseISO, getYear, getMonth } from 'date-fns';
 
 type Value = Date | [Date, Date] | null;
 
 const CalendarView: React.FC<CalendarProps> = () => {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [date, setDate] = useState<Date>(new Date());
 
     useEffect(() => {
         async function getPosts() {
             try {
-                const posts = await fetchPosts();
-                setPosts(posts);
+                const year = getYear(date);
+                const month = getMonth(date) + 1; // getMonth returns 0-indexed month
+                const data = await fetchPosts(year, month, 1, 100); // Fetch all posts for the month
+                if (Array.isArray(data.posts)) {
+                    setPosts(data.posts);
+                } else {
+                    setPosts([]);
+                }
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
+                setPosts([]);
             }
         }
         getPosts();
-    }, []);
+    }, [date]);
 
     const getPostsForDay = (date: Date) => {
         return posts.filter(post => isSameDay(parseISO(post.created_at), date));
@@ -47,6 +54,10 @@ const CalendarView: React.FC<CalendarProps> = () => {
         return null;
     };
 
+    const handleActiveStartDateChange = ({ activeStartDate }: { activeStartDate: Date }) => {
+        setDate(activeStartDate);
+    };
+
     return (
         <div className="flex-grow flex justify-center items-center">
             <div className="w-full h-full p-4">
@@ -56,6 +67,8 @@ const CalendarView: React.FC<CalendarProps> = () => {
                         tileContent={tileContent}
                         defaultView="month"
                         className="react-calendar custom-calendar"
+                        // @ts-ignore
+                        onActiveStartDateChange={handleActiveStartDateChange}
                     />
                 </div>
             </div>

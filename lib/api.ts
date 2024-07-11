@@ -1,30 +1,16 @@
-// // lib/api.ts
-// // const API_URL = process.env.API_URL;
-// const API_URL = process.env.NEXT_PUBLIC_API_URL;
-//
-//
-// export async function fetchPosts() {
-//     const res = await fetch(`${API_URL}/posts`);
-//     const data = await res.json();
-//     console.log("API DATA => ", data)
-//     return data;
-// }
-//
-// export async function fetchPost(id: string) {
-//     const res = await fetch(`${API_URL}/posts/${id}`);
-//     const data = await res.json();
-//     return data;
-// }
-
-// lib/api.ts
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-// const API_URL = "https://blog-api.jeremyd.net"
-export async function fetchPosts() {
+
+export async function fetchPosts(year?: number, month?: number, page: number = 1, limit: number = 5) {
     if (!API_URL) {
         throw new Error('API_URL is not defined');
     }
 
-    const res = await fetch(`${API_URL}/posts`);
+    let url = `${API_URL}/posts?page=${page}&limit=${limit}`;
+    if (year && month) {
+        url += `&year=${year}&month=${month}`;
+    }
+
+    const res = await fetch(url);
     if (!res.ok) {
         throw new Error(`Error fetching posts: ${res.statusText}`);
     }
