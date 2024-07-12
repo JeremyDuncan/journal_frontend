@@ -147,10 +147,10 @@ const SearchPage: React.FC = () => {
                         <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>
                         <p className="text-2xl font-bold text-stone-400 ">{post.title}</p>
 
-                        <div className="text-white">
+                        <div className="text-white mb-0 pb-0">
                             {truncateHtmlContent(post.content, 300)}
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-0">
                             {post.tags.map((tag) => (
                                 <span
                                     key={tag.id}
