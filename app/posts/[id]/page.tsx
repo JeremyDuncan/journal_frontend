@@ -23,7 +23,7 @@ export default function PostPage() {
                     console.error('Failed to fetch post:', error);
                 }
             };
-            getPost();
+            getPost().catch(error => console.error('Promise returned from getPost is ignored', error));
         }
     }, [id]);
 
