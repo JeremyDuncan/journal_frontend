@@ -2,15 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { fetchTags, fetchTagTypes, createTag, createTagType, deleteTag, deleteTagType, updateTagTypeColor } from '@/lib/api';
-import { Tag } from '@/lib/types';
+import { Tag, TagType } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
 import { FaPalette } from 'react-icons/fa';
-
-interface TagType {
-    id: number;
-    name: string;
-    color: string;
-}
 
 const TagsPage: React.FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -22,6 +16,8 @@ const TagsPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isColorPickerOpen, setIsColorPickerOpen] = useState<boolean>(false);
     const [editingTagType, setEditingTagType] = useState<TagType | null>(null);
+    const [tagToDelete, setTagToDelete] = useState<Tag | null>(null);
+    const [tagTypeToDelete, setTagTypeToDelete] = useState<TagType | null>(null);
 
     useEffect(() => {
         async function loadTags() {
@@ -76,11 +72,17 @@ const TagsPage: React.FC = () => {
         }
     };
 
-    const handleDeleteTag = async (tagId: number) => {
-        console.log('Deleting tag with ID:', tagId);
+    const confirmDeleteTag = (tag: Tag) => {
+        setTagToDelete(tag);
+    };
+
+    const handleDeleteTag = async () => {
+        if (!tagToDelete) return;
+        console.log('Deleting tag with ID:', tagToDelete.id);
         try {
-            await deleteTag(tagId);
-            setTags(tags.filter(tag => tag.id !== tagId));
+            await deleteTag(tagToDelete.id);
+            setTags(tags.filter(tag => tag.id !== tagToDelete.id));
+            setTagToDelete(null);
             setError(null);
         } catch (error) {
             console.error('Failed to delete tag:', error);
@@ -88,11 +90,17 @@ const TagsPage: React.FC = () => {
         }
     };
 
-    const handleDeleteTagType = async (tagTypeId: number) => {
-        console.log('Deleting tag type with ID:', tagTypeId);
+    const confirmDeleteTagType = (tagType: TagType) => {
+        setTagTypeToDelete(tagType);
+    };
+
+    const handleDeleteTagType = async () => {
+        if (!tagTypeToDelete) return;
+        console.log('Deleting tag type with ID:', tagTypeToDelete.id);
         try {
-            await deleteTagType(tagTypeId);
-            setTagTypes(tagTypes.filter(tagType => tagType.id !== tagTypeId));
+            await deleteTagType(tagTypeToDelete.id);
+            setTagTypes(tagTypes.filter(tagType => tagType.id !== tagTypeToDelete.id));
+            setTagTypeToDelete(null);
             setError(null);
         } catch (error) {
             console.error('Failed to delete tag type:', error);
@@ -137,33 +145,46 @@ const TagsPage: React.FC = () => {
         setEditingTagType(null);
     };
 
+    const closeDeleteTagModal = () => {
+        setTagToDelete(null);
+    };
+
+    const closeDeleteTagTypeModal = () => {
+        setTagTypeToDelete(null);
+    };
+
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-4xl font-bold mb-8 text-white">Blog Post Tags</h1>
-            <div className={"tag-box bg-gray-500"}>
+            <br />
+            <div className={"border tag-box bg-gray-800"}>
                 <h2 className="text-3xl font-bold mb-4 text-red">Tags</h2>
-                <div className="flex flex-col space-y-4 bg-gray-400 tag-box">
-                    {tags.map((tag) => (
-                        <div key={tag.id} className="border-b pb-2 flex justify-between items-center no-round">
-                            <div className="flex-grow flex justify-between items-center ">
-                                <span className="text-xl">{tag.name}</span>
-                                <span className="text-gray-500 ml-4">{tag.tag_type.name}</span>
-                            </div>
-                            <button
-                                onClick={() => handleDeleteTag(tag.id)}
-                                className="bg-red-500 text-white p-2 ml-2"
-                            >
-                                Delete
-                            </button>
+                <div className="flex flex-col space-y-4 bg-gray-700 tag-box">
+
+                    {tagTypes.filter(tagType => tags.some(tag => tag.tag_type.id === tagType.id)).map(tagType => (
+                        <div key={tagType.id} className="bg-gray-600 p-2 rounded mb-2">
+                            <h3 className="text-xl font-bold mb-2" style={{ color: tagType.color }}>{tagType.name}</h3>
+                            {tags.filter(tag => tag.tag_type.id === tagType.id).map(tag => (
+                                <div key={tag.id} className=" border-b pb-2 flex justify-between items-center mb-2">
+                                    <div className="flex items-center">
+                                        <span className="text-xl">{tag.name}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => confirmDeleteTag(tag)}
+                                        className="bg-red-500 text-white p-2 ml-2 mr-2"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     ))}
                 </div>
             </div>
-            <br/>
+            <br />
 
-            <div className={"tag-box bg-gray-500"}>
+            <div className={"border tag-box bg-gray-800"}>
                 <h2 className="text-3xl font-bold mb-4">Tag Types</h2>
-                <div className="flex flex-col bg-gray-400 tag-box">
+                <div className="flex flex-col bg-gray-600 tag-box">
                     {tagTypes.map((tagType) => (
                         <div key={tagType.id} className="border-b pb-2 flex justify-between items-center no-round">
                             <span
@@ -173,7 +194,7 @@ const TagsPage: React.FC = () => {
                             ></span>
                             <span className="text-xl flex-grow">{tagType.name}</span>
                             <button
-                                onClick={() => handleDeleteTagType(tagType.id)}
+                                onClick={() => confirmDeleteTagType(tagType)}
                                 className="bg-red-500 text-white p-2 ml-2"
                             >
                                 Delete
@@ -183,18 +204,20 @@ const TagsPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="mt-16  border-t tag-create-box bg-gray-800">
-                <p className="text-xl pl-4 pt-2"> Create Tags and Tag Types</p>
-                <div className="flex flex-col mt-2 gap-1 justify-center">
-                    <div className={"flex gap-2"}>
+
+            {/*################################## CREATE TAGS AND TYPES #############################################*/}
+            <div className="mt-16 border tag-create-box bg-gray-800 p-4 rounded">
+                <h2 className="text-xl font-bold mb-4 text-white">Create Tags and Tag Types</h2>
+                <div className="flex flex-col bg-gray-600 tag-box ">
+                    <div className="flex flex-wrap items-center space-x-2">
                         <input
                             type="text"
                             placeholder="Tag type name"
                             value={newTagTypeName}
                             onChange={(e) => setNewTagTypeName(e.target.value)}
-                            className="border p-2  text-black"
+                            className="border p-2 rounded text-black flex-grow"
                         />
-                        <div className="border color-picker p-2 flex items-center bg-gray-100 ">
+                        <div className="border p-2 rounded bg-gray-100 flex items-center">
                             <FaPalette
                                 size={24}
                                 className="cursor-pointer"
@@ -202,30 +225,32 @@ const TagsPage: React.FC = () => {
                                 style={{ color: newTagTypeColor }}
                             />
                         </div>
-                        <button onClick={handleCreateTagType} className="bg-green-500 text-white p-2">
+                        <button onClick={handleCreateTagType} className="bg-green-500 text-white p-2 rounded">
                             Create Tag Type
                         </button>
                     </div>
-                    <div>
+
+                    <div className="flex flex-wrap items-center space-x-2">
                         <input
                             type="text"
                             placeholder="Tag name"
                             value={newTagName}
                             onChange={(e) => setNewTagName(e.target.value)}
-                            className="border p-2 mr-2 text-black"
+                            className="border p-2 rounded text-black flex-grow"
                         />
                         <select
                             value={selectedTagType}
                             onChange={(e) => setSelectedTagType(e.target.value)}
-                            className="border p-2 mr-2 text-black"
+                            className="border p-2 rounded text-black flex-grow"
                         >
+                            <option value="default">Select Tag Type</option>
                             {tagTypes.map((type) => (
                                 <option key={type.id} value={type.name}>
                                     {type.name}
                                 </option>
                             ))}
                         </select>
-                        <button onClick={handleCreateTag} className="bg-blue-500 text-white p-2">
+                        <button onClick={handleCreateTag} className="bg-blue-500 text-white p-2 rounded">
                             Create Tag
                         </button>
                     </div>
@@ -234,28 +259,76 @@ const TagsPage: React.FC = () => {
 
             {isColorPickerOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded shadow-lg max-h-screen overflow-y-auto">
+                    <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
                         <h2 className="text-xl font-bold mb-4">Select Color</h2>
                         <HexColorPicker color={newTagTypeColor} onChange={setNewTagTypeColor} />
-                        <button
-                            onClick={handleColorSelection}
-                            className="mt-4 bg-blue-500 text-white p-2 rounded"
-                        >
-                            OK
-                        </button>
-                        <button
-                            onClick={closeColorPickerModal}
-                            className="mt-4 bg-gray-500 text-white p-2 rounded ml-2"
-                        >
-                            Cancel
-                        </button>
+                        <div className="flex justify-end mt-4 space-x-2">
+                            <button
+                                onClick={handleColorSelection}
+                                className="bg-blue-500 text-white p-2 rounded"
+                            >
+                                OK
+                            </button>
+                            <button
+                                onClick={closeColorPickerModal}
+                                className="bg-gray-500 text-white p-2 rounded"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {tagToDelete && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
+                        <h2 className="text-xl font-bold mb-4 text-black">Confirm Delete</h2>
+                        <p className="text-black">Are you sure you want to delete the tag <strong>{tagToDelete.name}</strong>?</p>
+                        <div className="flex justify-end mt-4 space-x-2">
+                            <button
+                                onClick={handleDeleteTag}
+                                className="bg-red-500 text-white p-2 rounded"
+                            >
+                                Delete
+                            </button>
+                            <button
+                                onClick={closeDeleteTagModal}
+                                className="bg-gray-500 text-white p-2 rounded"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {tagTypeToDelete && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
+                        <h2 className="text-xl font-bold mb-4 text-black">Confirm Delete</h2>
+                        <p className="text-black">Are you sure you want to delete the tag type <strong>{tagTypeToDelete.name}</strong>?</p>
+                        <div className="flex justify-end mt-4 space-x-2">
+                            <button
+                                onClick={handleDeleteTagType}
+                                className="bg-red-500 text-white p-2 rounded"
+                            >
+                                Delete
+                            </button>
+                            <button
+                                onClick={closeDeleteTagTypeModal}
+                                className="bg-gray-500 text-white p-2 rounded"
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
 
             {error && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded shadow-lg max-h-screen overflow-y-auto">
+                    <div className="bg-white p-4 rounded shadow-lg">
                         <h2 className="text-xl font-bold mb-4 text-black">Error</h2>
                         <p className="text-black">{error}</p>
                         <button onClick={closeModal} className="mt-4 bg-blue-500 text-white p-2 rounded">
