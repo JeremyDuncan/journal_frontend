@@ -47,8 +47,6 @@ export async function deletePost(id: string) {
     return null;
 }
 
-
-
 export async function fetchTags() {
     const res = await fetch(`${API_URL}/tags`);
     if (!res.ok) {
@@ -66,6 +64,7 @@ export async function fetchTagTypes() {
 }
 
 export async function createTag(name: string, tagType: string) {
+    tagType = (tagType == "") ? "default" : tagType;
     const res = await fetch(`${API_URL}/tags`, {
         method: 'POST',
         headers: {
@@ -78,6 +77,7 @@ export async function createTag(name: string, tagType: string) {
     }
     return res.json();
 }
+
 export async function createTagType(name: string) {
     const res = await fetch(`${API_URL}/tags/tag_types`, {
         method: 'POST',

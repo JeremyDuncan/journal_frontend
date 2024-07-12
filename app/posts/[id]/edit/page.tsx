@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
-import { fetchTags, fetchTagTypes, createTag } from '@/lib/api';
+import { fetchPost, fetchTags, fetchTagTypes, updatePost, createTag } from '@/lib/api';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -24,12 +24,15 @@ const modules = {
 
 const formats = [
     'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'bold', 'italic', 'underline',
+    'strike', 'blockquote',
     'list', 'bullet', 'indent',
     'link', 'image', 'video'
 ];
 
-export default function NewPost() {
+export default function EditPost() {
+    const { id } = useParams();
+    const router = useRouter();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [existingTags, setExistingTags] = useState<any[]>([]);
@@ -39,9 +42,19 @@ export default function NewPost() {
     const [newTagType, setNewTagType] = useState('');
     const [tagTypes, setTagTypes] = useState<any[]>([]);
     const [selectedTagType, setSelectedTagType] = useState('');
-    const router = useRouter();
 
     useEffect(() => {
+        async function fetchPostData() {
+            try {
+                const post = await fetchPost(id as string);
+                setTitle(post.title);
+                setContent(post.content);
+                setSelectedTags(post.tags.map((tag: any) => tag.name));
+            } catch (error) {
+                console.error('Failed to fetch post:', error);
+            }
+        }
+
         async function fetchTagsData() {
             try {
                 const tags = await fetchTags();
@@ -60,9 +73,10 @@ export default function NewPost() {
             }
         }
 
+        fetchPostData();
         fetchTagsData();
         fetchTagTypesData();
-    }, []);
+    }, [id]);
 
     const handleTagSelection = (tag: string) => {
         setSelectedTags((prevSelectedTags) =>
@@ -92,8 +106,8 @@ export default function NewPost() {
             // Fetch updated tags to ensure they are associated with the post
             const updatedTags = await fetchTags();
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-                method: 'POST',
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -108,19 +122,19 @@ export default function NewPost() {
             });
 
             if (!res.ok) {
-                throw new Error('Failed to create post');
+                throw new Error('Failed to update post');
             }
 
             const post = await res.json();
             router.push(`/posts/${post.id}`);
         } catch (error) {
-            console.error('Failed to create post:', error);
+            console.error('Failed to update post:', error);
         }
     };
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-4xl font-bold mb-8 text-white">Create New Blog Post</h1>
+            <h1 className="text-4xl font-bold mb-8 text-white">Edit Blog Post</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="title">
@@ -215,7 +229,7 @@ export default function NewPost() {
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
                 >
-                    Create Post
+                    Update Post
                 </button>
             </form>
             <div className="mt-4">

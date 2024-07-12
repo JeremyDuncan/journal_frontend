@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { fetchPost, deletePost } from '@/lib/api';
 import { Post } from '@/lib/types';
 import DOMPurify from 'dompurify';
+import Link from 'next/link';
 
 export default function PostPage() {
     const { id } = useParams();
@@ -64,17 +65,22 @@ export default function PostPage() {
                 <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
             </div>
             <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
-            <button
-                onClick={() => setShowModal(true)}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"
-            >
-                Delete Post
-            </button>
+            <div className="flex gap-4 mt-4">
+                <Link className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href={`/posts/${id}/edit`}>
+                    Edit Post
+                </Link>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Delete Post
+                </button>
+            </div>
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg">
-                        <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
-                        <p  className="text-black">Are you sure you want to delete this post?</p>
+                        <h2 className="text-xl font-bold text-black mb-4">Confirm Deletion</h2>
+                        <p className="text-black" >Are you sure you want to delete this post?</p>
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={() => setShowModal(false)}
