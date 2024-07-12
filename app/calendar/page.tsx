@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Calendar, { CalendarProps } from 'react-calendar';
+import React, { useState, useEffect, useRef } from 'react';
+import Calendar, { CalendarProps, OnArgs } from 'react-calendar';
 import { fetchPosts, fetchTags } from '@/lib/api';
 import Link from 'next/link';
 import { Post, Tag } from '@/lib/types';
-import { isSameDay, parseISO, getYear, getMonth } from 'date-fns';
-
-type Value = Date | [Date, Date] | null;
+import { isSameDay, parseISO, getYear, getMonth, format } from 'date-fns';
 
 const CalendarView: React.FC<CalendarProps> = () => {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -17,6 +15,9 @@ const CalendarView: React.FC<CalendarProps> = () => {
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [selectedDatePosts, setSelectedDatePosts] = useState<Post[]>([]);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         async function loadTags() {
@@ -27,7 +28,7 @@ const CalendarView: React.FC<CalendarProps> = () => {
                 console.error('Failed to load tags:', error);
             }
         }
-        loadTags();
+        loadTags().catch(error => console.error('Promise returned from loadTags is ignored', error));
     }, []);
 
     useEffect(() => {
@@ -46,14 +47,14 @@ const CalendarView: React.FC<CalendarProps> = () => {
                 setPosts([]);
             }
         }
-        getPosts();
+        getPosts().catch(error => console.error('Promise returned from getPost is ignored', error));
     }, [date]);
 
     useEffect(() => {
         // Filter posts based on selected tags
         if (selectedTags.length > 0) {
             const filtered = posts.filter(post =>
-                post.tags.some(tag => selectedTags.includes(tag.name))
+                post.tags.some((tag: Tag) => selectedTags.includes(tag.name))
             );
             setFilteredPosts(filtered);
         } else {
@@ -83,8 +84,10 @@ const CalendarView: React.FC<CalendarProps> = () => {
         return null;
     };
 
-    const handleActiveStartDateChange = ({ activeStartDate }: { activeStartDate: Date }) => {
-        setDate(activeStartDate);
+    const handleActiveStartDateChange = ({ activeStartDate }: OnArgs) => {
+        if (activeStartDate) {
+            setDate(activeStartDate);
+        }
     };
 
     const handleTagSelection = (tag: string) => {
@@ -98,11 +101,28 @@ const CalendarView: React.FC<CalendarProps> = () => {
     const handleDayClick = (date: Date) => {
         const postsForDay = getPostsForDay(date);
         setSelectedDatePosts(postsForDay);
+        setSelectedDate(date);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setSelectedDate(null);
+    };
+
+    useEffect(() => {
+        if (isModalOpen && modalRef.current && closeButtonRef.current) {
+            const modalHeight = modalRef.current.offsetHeight;
+            const modalTop = modalRef.current.getBoundingClientRect().top;
+            const buttonTop = modalTop + modalHeight + 20; // 20px below the modal
+
+            closeButtonRef.current.style.top = `${buttonTop}px`;
+        }
+    }, [isModalOpen, selectedDatePosts]);
+
+    const getFormattedDate = (date: Date | null) => {
+        if (!date) return '';
+        return format(date, "EEEE - MMMM do, yyyy");
     };
 
     return (
@@ -140,35 +160,49 @@ const CalendarView: React.FC<CalendarProps> = () => {
                 </div>
             </div>
             {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-gray-800 p-4 rounded shadow-lg w-3/4 max-h-3/4 overflow-y-auto">
-                        <h2 className="text-2xl font-bold mb-4">Posts on Selected Date</h2>
-                        <ul className="space-y-4">
-                            {selectedDatePosts.map(post => (
-                                <li key={post.id} className="border-b pb-2">
-                                    <Link href={`/posts/${post.id}`} className="text-xl text-blue-500 hover:underline">
-                                        {post.title}
-                                    </Link>
-                                    <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
-                                    {post.tags && post.tags.length > 0 && (
-                                        <div className="mt-2">
-                                            <span className="font-bold text-gray-700">Tags:</span>
-                                            <ul className="flex flex-wrap gap-2 mt-1">
-                                                {post.tags.map(tag => (
-                                                    <li key={tag.id} className="px-2 py-1 rounded" style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
-                                                        {tag.name}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                        <button onClick={closeModal} className="mt-4 bg-blue-500 text-white p-2 rounded">
-                            Close
-                        </button>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 overflow-y-auto">
+                    <div ref={modalRef} className="modal-container">
+                        <h2 className="text-2xl font-bold mb-4" style={{textAlign: 'center'}}>
+                            {getFormattedDate(selectedDate)}
+                        </h2>
+                        {selectedDatePosts.length > 0 ? (
+                            <ul className="space-y-4">
+                                {selectedDatePosts.map(post => (
+                                    <li key={post.id} className="border-b pb-2">
+                                        <Link href={`/posts/${post.id}`}
+                                              className="text-xl text-blue-500 hover:underline block text-left">
+                                            {post.title}
+                                        </Link>
+                                        <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
+                                        {post.tags && post.tags.length > 0 && (
+                                            <div className="mt-2">
+                                                <span className="font-bold text-gray-700">Tags:</span>
+                                                <ul className="flex flex-wrap gap-2 mt-1">
+                                                    {post.tags.map(tag => (
+                                                        <li key={tag.id} className="px-2 py-1 rounded"
+                                                            style={{backgroundColor: tag.tag_type.color, color: 'white'}}>
+                                                            {tag.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p style={{textAlign: 'center'}}>No Blog Posts for this Date.</p>
+                        )}
+
+
                     </div>
+                    <button
+                        ref={closeButtonRef}
+                        onClick={closeModal}
+                        className="modal-close-button"
+                    >
+                        Close
+                    </button>
                 </div>
             )}
         </div>

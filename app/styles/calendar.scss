@@ -176,3 +176,35 @@ body > main > div > div > div > div {
   background-color: $neighboring-month-background-color;
   color: $neighboring-month-text-color;
 }
+
+//MODAL SECTION
+.modal-container {
+  position: relative;
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-close-button {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff0000;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.modal-close-button:hover {
+  background-color: #ff4d4d;
+}
+
+.modal-close-button:active {
+  background-color: #ff1a1a;
+}

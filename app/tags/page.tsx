@@ -236,7 +236,7 @@ const TagsPage: React.FC = () => {
 
             {isColorPickerOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded shadow-lg">
+                    <div className="bg-white p-4 rounded shadow-lg max-h-screen overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">Select Color</h2>
                         <HexColorPicker color={newTagTypeColor} onChange={setNewTagTypeColor} />
                         <button
@@ -257,7 +257,7 @@ const TagsPage: React.FC = () => {
 
             {error && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded shadow-lg">
+                    <div className="bg-white p-4 rounded shadow-lg max-h-screen overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4 text-black">Error</h2>
                         <p className="text-black">{error}</p>
                         <button onClick={closeModal} className="mt-4 bg-blue-500 text-white p-2 rounded">
