@@ -130,3 +130,14 @@ export async function deleteTagType(id: number) {
         throw new Error(`Error deleting tag type: ${res.statusText}`);
     }
 }
+export const fetchPostsSearch = async (query: string, page: number = 1, limit: number = 5) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+
+    if (!response.ok) {
+        throw new Error('Failed to search posts');
+    }
+
+    return response.json();
+};
+
+
