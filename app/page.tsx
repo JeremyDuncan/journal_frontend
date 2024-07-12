@@ -55,7 +55,7 @@ export default function Home() {
 
     const renderPagination = () => {
         const pages = [];
-        const maxPagesToShow = 6;
+        const maxPagesToShow = 3;
         let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
         let endPage = startPage + maxPagesToShow - 1;
 
