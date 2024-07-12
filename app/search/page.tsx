@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { fetchPostsSearch } from '@/lib/api';
 import { Post } from '@/lib/types';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
 const truncateHtmlContent = (html: string, maxLength: number): string => {
+    const sanitizedHtml = DOMPurify.sanitize(html);
     const div = document.createElement('div');
-    div.innerHTML = html;
+    div.innerHTML = sanitizedHtml;
     const textContent = div.textContent || div.innerText || '';
     return textContent.length > maxLength
         ? textContent.substring(0, maxLength) + '...'
@@ -70,7 +72,31 @@ const SearchPage: React.FC = () => {
 
     const renderPagination = () => {
         const pages = [];
-        for (let i = 1; i <= totalPages; i++) {
+        const maxPagesToShow = 6;
+        let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
+        let endPage = startPage + maxPagesToShow - 1;
+
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+
+        if (startPage > 1) {
+            pages.push(
+                <button
+                    key="start"
+                    onClick={() => handlePageClick(1)}
+                    className="px-3 py-1 rounded bg-gray-200 text-black"
+                >
+                    1
+                </button>
+            );
+            if (startPage > 2) {
+                pages.push(<span key="start-ellipsis" className="px-3 py-1">...</span>);
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
             pages.push(
                 <button
                     key={i}
@@ -81,6 +107,22 @@ const SearchPage: React.FC = () => {
                 </button>
             );
         }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                pages.push(<span key="end-ellipsis" className="px-3 py-1">...</span>);
+            }
+            pages.push(
+                <button
+                    key="end"
+                    onClick={() => handlePageClick(totalPages)}
+                    className="px-3 py-1 rounded bg-gray-200 text-black"
+                >
+                    {totalPages}
+                </button>
+            );
+        }
+
         return pages;
     };
 
@@ -103,19 +145,17 @@ const SearchPage: React.FC = () => {
                 {posts.map((post) => (
                     <div key={post.id} className="mb-4 p-4 border rounded bg-gray-800 text-white">
                         <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>
-                        <h2 className="text-2xl font-bold">
-                            <Link href={`/posts/${post.id}`} className="hover:text-gray-400">{post.title}</Link>
-                        </h2>
-                        <div
-                            className="text-white"
-                            dangerouslySetInnerHTML={{ __html: truncateHtmlContent(post.content, 300) }}
-                        />
+                        <p className="text-2xl font-bold text-stone-400 ">{post.title}</p>
+
+                        <div className="text-white">
+                            {truncateHtmlContent(post.content, 300)}
+                        </div>
                         <div className="mt-2">
                             {post.tags.map((tag) => (
                                 <span
                                     key={tag.id}
                                     className="inline-block text-white px-2 py-1 rounded mr-2"
-                                    style={{ backgroundColor: tag.tag_type.color }}
+                                    style={{backgroundColor: tag.tag_type.color}}
                                 >
                                     {tag.name}
                                 </span>
