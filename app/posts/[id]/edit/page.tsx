@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
-import { fetchPost, fetchTags, fetchTagTypes, updatePost, createTag } from '@/lib/api';
+import { fetchPost, fetchTags, fetchTagTypes, createTag } from '@/lib/api';
+import { Post, Tag } from '@/lib/types';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -33,23 +34,23 @@ const formats = [
 export default function EditPost() {
     const { id } = useParams();
     const router = useRouter();
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [existingTags, setExistingTags] = useState<any[]>([]);
+    const [title, setTitle] = useState<string>('');
+    const [content, setContent] = useState<string>('');
+    const [existingTags, setExistingTags] = useState<Tag[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [newTags, setNewTags] = useState<{ name: string; tagType?: string }[]>([]);
-    const [newTagName, setNewTagName] = useState('');
-    const [newTagType, setNewTagType] = useState('');
+    const [newTagName, setNewTagName] = useState<string>('');
+    const [newTagType, setNewTagType] = useState<string>('');
     const [tagTypes, setTagTypes] = useState<any[]>([]);
-    const [selectedTagType, setSelectedTagType] = useState('');
+    const [selectedTagType, setSelectedTagType] = useState<string>('');
 
     useEffect(() => {
         async function fetchPostData() {
             try {
-                const post = await fetchPost(id as string);
+                const post: Post = await fetchPost(id as string);
                 setTitle(post.title);
                 setContent(post.content);
-                setSelectedTags(post.tags.map((tag: any) => tag.name));
+                setSelectedTags(post.tags.map((tag: Tag) => tag.name));
             } catch (error) {
                 console.error('Failed to fetch post:', error);
             }
@@ -57,7 +58,7 @@ export default function EditPost() {
 
         async function fetchTagsData() {
             try {
-                const tags = await fetchTags();
+                const tags: Tag[] = await fetchTags();
                 setExistingTags(tags);
             } catch (error) {
                 console.error('Failed to fetch tags:', error);
@@ -100,11 +101,11 @@ export default function EditPost() {
         try {
             // Create new tags if any
             for (const newTag of newTags) {
-                await createTag(newTag.name, newTag.tagType);
+                await createTag(newTag.name, newTag.tagType || ''); // Ensure tagType is a string
             }
 
             // Fetch updated tags to ensure they are associated with the post
-            const updatedTags = await fetchTags();
+            const updatedTags: Tag[] = await fetchTags();
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
                 method: 'PUT',
@@ -117,7 +118,7 @@ export default function EditPost() {
                     tags: [
                         ...selectedTags,
                         ...newTags.map((tag) => tag.name)
-                    ].filter(tag => updatedTags.some(t => t.name === tag))
+                    ].filter(tag => updatedTags.some((t: Tag) => t.name === tag))
                 }),
             });
 
