@@ -24,7 +24,7 @@ export default function Home() {
                 console.error('Failed to fetch posts:', error);
             }
         }
-        getPosts();
+        getPosts().catch(error => console.error('Promise returned from getPost is ignored', error));
     }, [page]);
 
     const handleNextPage = () => {
