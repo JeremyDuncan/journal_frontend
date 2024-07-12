@@ -2,9 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { fetchTags, fetchTagTypes, createTag, createTagType, deleteTag, deleteTagType, updateTagTypeColor } from '@/lib/api';
-import { Tag, TagType } from '@/lib/types';
+import { Tag } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
 import { FaPalette } from 'react-icons/fa';
+
+interface TagType {
+    id: number;
+    name: string;
+    color: string;
+}
 
 const TagsPage: React.FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -29,7 +35,7 @@ const TagsPage: React.FC = () => {
                 setError('Failed to load tags or tag types.');
             }
         }
-        loadTags();
+        loadTags().catch(error => console.error('Promise returned from loadTags is ignored', error));
     }, []);
 
     const handleCreateTag = async () => {
@@ -166,8 +172,6 @@ const TagsPage: React.FC = () => {
                                 onClick={() => openColorPickerModalForExistingTagType(tagType)}
                             ></span>
                             <span className="text-xl flex-grow">{tagType.name}</span>
-
-
                             <button
                                 onClick={() => handleDeleteTagType(tagType.id)}
                                 className="bg-red-500 text-white p-2 ml-2"
@@ -179,12 +183,9 @@ const TagsPage: React.FC = () => {
                 </div>
             </div>
 
-
-            {/*################################## CREATE TAGS AND TYPES #############################################*/}
             <div className="mt-16  border-t tag-create-box bg-gray-800">
                 <p className="text-xl pl-4 pt-2"> Create Tags and Tag Types</p>
                 <div className="flex flex-col mt-2 gap-1 justify-center">
-
                     <div className={"flex gap-2"}>
                         <input
                             type="text"
@@ -201,12 +202,10 @@ const TagsPage: React.FC = () => {
                                 style={{ color: newTagTypeColor }}
                             />
                         </div>
-
                         <button onClick={handleCreateTagType} className="bg-green-500 text-white p-2">
                             Create Tag Type
                         </button>
                     </div>
-
                     <div>
                         <input
                             type="text"
@@ -230,7 +229,6 @@ const TagsPage: React.FC = () => {
                             Create Tag
                         </button>
                     </div>
-
                 </div>
             </div>
 
