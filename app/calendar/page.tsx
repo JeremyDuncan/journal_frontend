@@ -6,6 +6,7 @@ import { fetchPosts, fetchTags } from '@/lib/api';
 import Link from 'next/link';
 import { Post, Tag } from '@/lib/types';
 import { isSameDay, parseISO, getYear, getMonth, format } from 'date-fns';
+import DOMPurify from "dompurify";
 
 const CalendarView: React.FC<CalendarProps> = () => {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -125,6 +126,16 @@ const CalendarView: React.FC<CalendarProps> = () => {
         return format(date, "EEEE - MMMM do, yyyy");
     };
 
+    const truncateHtmlContent = (html: string, maxLength: number): string => {
+        const sanitizedHtml = DOMPurify.sanitize(html);
+        const div = document.createElement('div');
+        div.innerHTML = sanitizedHtml;
+        const textContent = div.textContent || div.innerText || '';
+        return textContent.length > maxLength
+            ? textContent.substring(0, maxLength) + '...'
+            : textContent;
+    };
+
     return (
         <div className="flex-grow flex justify-center items-center">
             <div className="w-full h-full p-4">
@@ -161,45 +172,49 @@ const CalendarView: React.FC<CalendarProps> = () => {
             </div>
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 overflow-y-auto">
-                    <div ref={modalRef} className="modal-container">
-                        <h2 className="text-2xl font-bold mb-4" style={{textAlign: 'center'}}>
+                    <div ref={modalRef} className="modal-container bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+                        <h2 className="text-2xl font-bold mb-4 text-center">
                             {getFormattedDate(selectedDate)}
                         </h2>
                         {selectedDatePosts.length > 0 ? (
                             <ul className="space-y-4">
                                 {selectedDatePosts.map(post => (
-                                    <li key={post.id} className="border-b pb-2">
-                                        <Link href={`/posts/${post.id}`}
-                                              className="text-xl text-blue-500 hover:underline block text-left">
-                                            {post.title}
-                                        </Link>
-                                        <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
+                                    <li key={post.id} className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                                        <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>
+                                        <p className="text-2xl font-bold text-stone-400 ">{post.title}</p>
+
+                                        <div className="text-white">
+                                            {truncateHtmlContent(post.content, 100)}
+                                        </div>
                                         {post.tags && post.tags.length > 0 && (
                                             <div className="mt-2">
-                                                <span className="font-bold text-gray-700">Tags:</span>
                                                 <ul className="flex flex-wrap gap-2 mt-1">
                                                     {post.tags.map(tag => (
-                                                        <li key={tag.id} className="px-2 py-1 rounded"
-                                                            style={{backgroundColor: tag.tag_type.color, color: 'white'}}>
+                                                        <li key={tag.id} className="px-2 py-1 rounded" style={{
+                                                            backgroundColor: tag.tag_type.color,
+                                                            color: 'white'
+                                                        }}>
                                                             {tag.name}
                                                         </li>
                                                     ))}
                                                 </ul>
                                             </div>
                                         )}
+                                        <div style={{marginTop: '10px'}} className="flex flex-wrap gap-2">
+                                            <Link href={`/posts/${post.id}`} className="text-blue-300 hover:underline">Read
+                                                more</Link>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
                         ) : (
-                            <p style={{textAlign: 'center'}}>No Blog Posts for this Date.</p>
+                            <p className="text-center">No Blog Posts for this Date.</p>
                         )}
-
-
                     </div>
                     <button
                         ref={closeButtonRef}
                         onClick={closeModal}
-                        className="modal-close-button"
+                        className="modal-close-button text-white bg-blue-500 px-4 py-2 rounded mt-4"
                     >
                         Close
                     </button>
