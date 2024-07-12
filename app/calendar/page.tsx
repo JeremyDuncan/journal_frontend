@@ -15,6 +15,8 @@ const CalendarView: React.FC<CalendarProps> = () => {
     const [tags, setTags] = useState<Tag[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [selectedDatePosts, setSelectedDatePosts] = useState<Post[]>([]);
 
     useEffect(() => {
         async function loadTags() {
@@ -93,6 +95,16 @@ const CalendarView: React.FC<CalendarProps> = () => {
         );
     };
 
+    const handleDayClick = (date: Date) => {
+        const postsForDay = getPostsForDay(date);
+        setSelectedDatePosts(postsForDay);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
     return (
         <div className="flex-grow flex justify-center items-center">
             <div className="w-full h-full p-4">
@@ -122,11 +134,43 @@ const CalendarView: React.FC<CalendarProps> = () => {
                         tileContent={tileContent}
                         defaultView="month"
                         className="react-calendar custom-calendar"
-                        // @ts-ignore
+                        onClickDay={handleDayClick}
                         onActiveStartDateChange={handleActiveStartDateChange}
                     />
                 </div>
             </div>
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-gray-800 p-4 rounded shadow-lg w-3/4 max-h-3/4 overflow-y-auto">
+                        <h2 className="text-2xl font-bold mb-4">Posts on Selected Date</h2>
+                        <ul className="space-y-4">
+                            {selectedDatePosts.map(post => (
+                                <li key={post.id} className="border-b pb-2">
+                                    <Link href={`/posts/${post.id}`} className="text-xl text-blue-500 hover:underline">
+                                        {post.title}
+                                    </Link>
+                                    <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
+                                    {post.tags && post.tags.length > 0 && (
+                                        <div className="mt-2">
+                                            <span className="font-bold text-gray-700">Tags:</span>
+                                            <ul className="flex flex-wrap gap-2 mt-1">
+                                                {post.tags.map(tag => (
+                                                    <li key={tag.id} className="px-2 py-1 rounded" style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
+                                                        {tag.name}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                        <button onClick={closeModal} className="mt-4 bg-blue-500 text-white p-2 rounded">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
