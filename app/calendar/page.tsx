@@ -93,7 +93,6 @@ const CalendarView: React.FC<CalendarProps> = () => {
         );
     };
 
-
     return (
         <div className="flex-grow flex justify-center items-center">
             <div className="w-full h-full p-4">
@@ -111,11 +110,12 @@ const CalendarView: React.FC<CalendarProps> = () => {
                                     onChange={() => handleTagSelection(tag.name)}
                                     className="mr-2"
                                 />
-                                <label htmlFor={tag.name} className="text-white">{tag.name}</label>
+                                <label htmlFor={tag.name} className="px-2 py-1 rounded" style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
+                                    {tag.name}
+                                </label>
                             </div>
                         ))}
                     </div>
-
                 </div>
                 <div className="bg-gray-900 shadow-lg rounded-lg p-4 h-full">
                     <Calendar

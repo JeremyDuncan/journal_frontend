@@ -96,7 +96,8 @@ export async function createTagType(name: string, color: string) {
 
     return res.json();
 }
-export async function updateTagType(id: number, color: string) {
+
+export async function updateTagTypeColor(id: number, color: string) {
     const res = await fetch(`${API_URL}/tags/tag_types/${id}`, {
         method: 'PUT',
         headers: {
@@ -104,12 +105,13 @@ export async function updateTagType(id: number, color: string) {
         },
         body: JSON.stringify({ tag_type: { color } }),
     });
+
     if (!res.ok) {
-        throw new Error(`Error updating tag type: ${res.statusText}`);
+        throw new Error(`Error updating tag type color: ${res.statusText}`);
     }
+
     return res.json();
 }
-
 
 export async function deleteTag(id: number) {
     const res = await fetch(`${API_URL}/tags/${id}`, {

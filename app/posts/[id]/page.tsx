@@ -53,7 +53,11 @@ export default function PostPage() {
                     <span className="font-bold text-gray-700">Tags:</span>
                     <ul className="flex flex-wrap gap-2 mt-1">
                         {post.tags.map((tag) => (
-                            <li key={tag.id} className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                            <li
+                                key={tag.id}
+                                className="px-2 py-1 rounded"
+                                style={{ backgroundColor: tag.tag_type.color, color: 'white' }} // Use the tag type color
+                            >
                                 {tag.name}
                             </li>
                         ))}
@@ -80,7 +84,7 @@ export default function PostPage() {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg">
                         <h2 className="text-xl font-bold text-black mb-4">Confirm Deletion</h2>
-                        <p className="text-black" >Are you sure you want to delete this post?</p>
+                        <p className="text-black">Are you sure you want to delete this post?</p>
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={() => setShowModal(false)}

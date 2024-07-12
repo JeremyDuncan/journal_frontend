@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { fetchTags, fetchTagTypes, createTag, createTagType, deleteTag, deleteTagType } from '@/lib/api';
+import { fetchTags, fetchTagTypes, createTag, createTagType, deleteTag, deleteTagType, updateTagTypeColor } from '@/lib/api';
 import { Tag, TagType } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
 import { FaPalette } from 'react-icons/fa';
@@ -15,6 +15,7 @@ const TagsPage: React.FC = () => {
     const [newTagTypeColor, setNewTagTypeColor] = useState<string>('#0000ff'); // Default to blue color
     const [error, setError] = useState<string | null>(null);
     const [isColorPickerOpen, setIsColorPickerOpen] = useState<boolean>(false);
+    const [editingTagType, setEditingTagType] = useState<TagType | null>(null);
 
     useEffect(() => {
         async function loadTags() {
@@ -93,20 +94,41 @@ const TagsPage: React.FC = () => {
         }
     };
 
+    const openColorPickerModalForExistingTagType = (tagType: TagType) => {
+        setEditingTagType(tagType);
+        setNewTagTypeColor(tagType.color);
+        setIsColorPickerOpen(true);
+    };
+
+    const openColorPickerModalForNewTagType = () => {
+        setEditingTagType(null);
+        setNewTagTypeColor('#0000ff'); // Reset to default blue color
+        setIsColorPickerOpen(true);
+    };
+
+    const handleColorSelection = async () => {
+        if (editingTagType) {
+            try {
+                await updateTagTypeColor(editingTagType.id, newTagTypeColor);
+                setTagTypes(tagTypes.map(tagType => tagType.id === editingTagType.id ? { ...tagType, color: newTagTypeColor } : tagType));
+                closeColorPickerModal();
+            } catch (error) {
+                console.error('Failed to update tag type color:', error);
+                setError('Failed to update tag type color.');
+            }
+        } else {
+            // Handle color selection for new tag type creation
+            closeColorPickerModal();
+        }
+    };
+
     const closeModal = () => {
         setError(null);
     };
 
-    const openColorPickerModal = () => {
-        setIsColorPickerOpen(true);
-    };
-
     const closeColorPickerModal = () => {
         setIsColorPickerOpen(false);
-    };
-
-    const handleColorSelection = () => {
-        closeColorPickerModal();
+        setEditingTagType(null);
     };
 
     return (
@@ -131,18 +153,21 @@ const TagsPage: React.FC = () => {
                     ))}
                 </div>
             </div>
-
             <br />
+
             <div className={"tag-box bg-gray-500"}>
                 <h2 className="text-3xl font-bold mb-4">Tag Types</h2>
                 <div className="flex flex-col bg-gray-400 tag-box">
                     {tagTypes.map((tagType) => (
                         <div key={tagType.id} className="border-b pb-2 flex justify-between items-center no-round">
-                            <span className="text-xl flex-grow">{tagType.name}</span>
                             <span
-                                className="inline-block w-4 h-4 rounded-full"
-                                style={{ backgroundColor: tagType.color }}
+                                className="inline-block w-6 h-6 rounded cursor-pointer mr-4"
+                                style={{backgroundColor: tagType.color}}
+                                onClick={() => openColorPickerModalForExistingTagType(tagType)}
                             ></span>
+                            <span className="text-xl flex-grow">{tagType.name}</span>
+
+
                             <button
                                 onClick={() => handleDeleteTagType(tagType.id)}
                                 className="bg-red-500 text-white p-2 ml-2"
@@ -153,6 +178,7 @@ const TagsPage: React.FC = () => {
                     ))}
                 </div>
             </div>
+
 
             {/*################################## CREATE TAGS AND TYPES #############################################*/}
             <div className="mt-16  border-t tag-create-box bg-gray-800">
@@ -171,8 +197,8 @@ const TagsPage: React.FC = () => {
                             <FaPalette
                                 size={24}
                                 className="cursor-pointer"
-                                onClick={openColorPickerModal}
-                                style={{color: newTagTypeColor}}
+                                onClick={openColorPickerModalForNewTagType}
+                                style={{ color: newTagTypeColor }}
                             />
                         </div>
 
@@ -180,7 +206,6 @@ const TagsPage: React.FC = () => {
                             Create Tag Type
                         </button>
                     </div>
-
 
                     <div>
                         <input
@@ -206,7 +231,6 @@ const TagsPage: React.FC = () => {
                         </button>
                     </div>
 
-
                 </div>
             </div>
 
@@ -214,7 +238,7 @@ const TagsPage: React.FC = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg">
                         <h2 className="text-xl font-bold mb-4">Select Color</h2>
-                        <HexColorPicker color={newTagTypeColor} onChange={setNewTagTypeColor}/>
+                        <HexColorPicker color={newTagTypeColor} onChange={setNewTagTypeColor} />
                         <button
                             onClick={handleColorSelection}
                             className="mt-4 bg-blue-500 text-white p-2 rounded"

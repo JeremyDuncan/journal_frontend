@@ -176,7 +176,9 @@ export default function EditPost() {
                                     onChange={() => handleTagSelection(tag.name)}
                                     className="mr-2"
                                 />
-                                <label htmlFor={tag.name} className="text-white">{tag.name}</label>
+                                <label htmlFor={tag.name} className="px-2 py-1 rounded" style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
+                                    {tag.name}
+                                </label>
                             </div>
                         ))}
                     </div>

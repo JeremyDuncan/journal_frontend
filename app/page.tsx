@@ -57,7 +57,11 @@ export default function Home() {
                                 <span className="font-bold text-gray-700">Tags:</span>
                                 <ul className="flex flex-wrap gap-2 mt-1">
                                     {post.tags.map((tag) => (
-                                        <li key={tag.id} className="bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                                        <li
+                                            key={tag.id}
+                                            className="px-2 py-1 rounded"
+                                            style={{ backgroundColor: tag.tag_type.color, color: 'white' }} // Use the tag type color
+                                        >
                                             {tag.name}
                                         </li>
                                     ))}
