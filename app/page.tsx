@@ -147,7 +147,7 @@ export default function Home() {
             </ul>
             {posts.length > 0 && (
                 <div className="flex justify-between mt-4 items-center">
-                <button
+                    <button
                         onClick={handlePreviousPage}
                         disabled={page === 1}
                         className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"

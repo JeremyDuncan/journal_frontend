@@ -139,7 +139,7 @@ const TagsPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <br />
+            <h1 className="text-4xl font-bold mb-8 text-white">Blog Post Tags</h1>
             <div className={"tag-box bg-gray-500"}>
                 <h2 className="text-3xl font-bold mb-4 text-red">Tags</h2>
                 <div className="flex flex-col space-y-4 bg-gray-400 tag-box">
@@ -159,7 +159,7 @@ const TagsPage: React.FC = () => {
                     ))}
                 </div>
             </div>
-            <br />
+            <br/>
 
             <div className={"tag-box bg-gray-500"}>
                 <h2 className="text-3xl font-bold mb-4">Tag Types</h2>
