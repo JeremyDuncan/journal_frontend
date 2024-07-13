@@ -154,15 +154,14 @@ const TagsPage: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <br />
+        <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
             <div className={"border tag-box bg-gray-800"}>
                 <h2 className="text-3xl font-bold mb-4 text-red">Tags</h2>
                 <div className="flex flex-col space-y-4 bg-gray-700 tag-box">
 
                     {tagTypes.filter(tagType => tags.some(tag => tag.tag_type.id === tagType.id)).map(tagType => (
-                        <div key={tagType.id} className="bg-gray-600 p-2 rounded mb-2">
-                            <h3 className="text-xl font-bold mb-2" style={{ color: tagType.color }}>{tagType.name}</h3>
+                        <div key={tagType.id} className="bg-gray-600 p-2  rounded mb-2">
+                            <h3 className="text-xl font-bold mb-2" style={{color: tagType.color}}>{tagType.name}</h3>
                             {tags.filter(tag => tag.tag_type.id === tagType.id).map(tag => (
                                 <div key={tag.id} className=" border-b pb-2 flex justify-between items-center mb-2">
                                     <div className="flex items-center">
@@ -170,7 +169,7 @@ const TagsPage: React.FC = () => {
                                     </div>
                                     <button
                                         onClick={() => confirmDeleteTag(tag)}
-                                        className="bg-red-500 text-white p-2 ml-2 mr-2"
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
                                     >
                                         Delete
                                     </button>
@@ -180,13 +179,13 @@ const TagsPage: React.FC = () => {
                     ))}
                 </div>
             </div>
-            <br />
+            <br/>
 
             <div className={"border tag-box bg-gray-800"}>
                 <h2 className="text-3xl font-bold mb-4">Tag Types</h2>
                 <div className="flex flex-col bg-gray-600 tag-box">
                     {tagTypes.map((tagType) => (
-                        <div key={tagType.id} className="border-b pb-2 flex justify-between items-center no-round">
+                        <div key={tagType.id} className="border-b pb-2 flex justify-between items-center  no-round">
                             <span
                                 className="inline-block w-6 h-6 rounded cursor-pointer mr-4"
                                 style={{backgroundColor: tagType.color}}
@@ -195,7 +194,7 @@ const TagsPage: React.FC = () => {
                             <span className="text-xl flex-grow">{tagType.name}</span>
                             <button
                                 onClick={() => confirmDeleteTagType(tagType)}
-                                className="bg-red-500 text-white p-2 ml-2"
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Delete
                             </button>
@@ -217,15 +216,15 @@ const TagsPage: React.FC = () => {
                             onChange={(e) => setNewTagTypeName(e.target.value)}
                             className="border p-2 rounded text-black flex-grow"
                         />
-                        <div className="border p-2 rounded bg-gray-100 flex items-center">
+                        <div className="border p-2  bg-gray-100 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                             <FaPalette
                                 size={24}
                                 className="cursor-pointer"
                                 onClick={openColorPickerModalForNewTagType}
-                                style={{ color: newTagTypeColor }}
+                                style={{color: newTagTypeColor}}
                             />
                         </div>
-                        <button onClick={handleCreateTagType} className="bg-green-500 text-white p-2 rounded">
+                        <button onClick={handleCreateTagType} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                             Create Tag Type
                         </button>
                     </div>
@@ -250,7 +249,7 @@ const TagsPage: React.FC = () => {
                                 </option>
                             ))}
                         </select>
-                        <button onClick={handleCreateTag} className="bg-blue-500 text-white p-2 rounded">
+                        <button onClick={handleCreateTag} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Create Tag
                         </button>
                     </div>
@@ -259,19 +258,22 @@ const TagsPage: React.FC = () => {
 
             {isColorPickerOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
-                        <h2 className="text-xl font-bold mb-4">Select Color</h2>
-                        <HexColorPicker color={newTagTypeColor} onChange={setNewTagTypeColor} />
+                    <div className=" p-4 bg-gray-300 rounded shadow-lg w-full max-w-sm">
+
+                        <h2 className="text-xl font-bold text-black mb-4">Select Color</h2>
+                        <div className="flex justify-center">
+                            <HexColorPicker color={newTagTypeColor} onChange={setNewTagTypeColor} />
+                        </div>
                         <div className="flex justify-end mt-4 space-x-2">
                             <button
                                 onClick={handleColorSelection}
-                                className="bg-blue-500 text-white p-2 rounded"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 OK
                             </button>
                             <button
                                 onClick={closeColorPickerModal}
-                                className="bg-gray-500 text-white p-2 rounded"
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Cancel
                             </button>
@@ -284,17 +286,18 @@ const TagsPage: React.FC = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
                         <h2 className="text-xl font-bold mb-4 text-black">Confirm Delete</h2>
-                        <p className="text-black">Are you sure you want to delete the tag <strong>{tagToDelete.name}</strong>?</p>
+                        <p className="text-black">Are you sure you want to delete the
+                            tag <strong>{tagToDelete.name}</strong>?</p>
                         <div className="flex justify-end mt-4 space-x-2">
                             <button
                                 onClick={handleDeleteTag}
-                                className="bg-red-500 text-white p-2 rounded"
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Delete
                             </button>
                             <button
                                 onClick={closeDeleteTagModal}
-                                className="bg-gray-500 text-white p-2 rounded"
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Cancel
                             </button>
@@ -307,17 +310,18 @@ const TagsPage: React.FC = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
                         <h2 className="text-xl font-bold mb-4 text-black">Confirm Delete</h2>
-                        <p className="text-black">Are you sure you want to delete the tag type <strong>{tagTypeToDelete.name}</strong>?</p>
+                        <p className="text-black">Are you sure you want to delete the tag
+                            type <strong>{tagTypeToDelete.name}</strong>?</p>
                         <div className="flex justify-end mt-4 space-x-2">
                             <button
                                 onClick={handleDeleteTagType}
-                                className="bg-red-500 text-white p-2 rounded"
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Delete
                             </button>
                             <button
                                 onClick={closeDeleteTagTypeModal}
-                                className="bg-gray-500 text-white p-2 rounded"
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Cancel
                             </button>
@@ -331,7 +335,7 @@ const TagsPage: React.FC = () => {
                     <div className="bg-white p-4 rounded shadow-lg">
                         <h2 className="text-xl font-bold mb-4 text-black">Error</h2>
                         <p className="text-black">{error}</p>
-                        <button onClick={closeModal} className="mt-4 bg-blue-500 text-white p-2 rounded">
+                        <button onClick={closeModal} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Close
                         </button>
                     </div>
