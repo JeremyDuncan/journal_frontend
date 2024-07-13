@@ -6,6 +6,8 @@ import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import { fetchTags, fetchTagTypes, createTag } from '@/lib/api';
 import { Tag } from '@/lib/types';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -41,6 +43,8 @@ export default function NewPost() {
     const [newTagType, setNewTagType] = useState<string>('');
     const [tagTypes, setTagTypes] = useState<{ id: string; name: string }[]>([]);
     const [selectedTagType, setSelectedTagType] = useState<string>('');
+    const [createdAt, setCreatedAt] = useState<Date | null>(new Date());
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -105,7 +109,8 @@ export default function NewPost() {
                     tags: [
                         ...selectedTags,
                         ...newTags.map((tag) => tag.name)
-                    ].filter(tag => updatedTags.some((t: Tag) => t.name === tag))
+                    ].filter(tag => updatedTags.some((t: Tag) => t.name === tag)),
+                    created_at: createdAt?.toISOString() || new Date().toISOString() // Save the created_at time
                 }),
             });
 
@@ -227,7 +232,26 @@ export default function NewPost() {
                         </div>
                     </div>
                 )}
-
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                    <label className="block text-white text-sm font-bold mb-2">
+                        <input
+                            type="checkbox"
+                            checked={showDatePicker}
+                            onChange={() => setShowDatePicker(!showDatePicker)}
+                            className="mr-2"
+                        />
+                        Post for different date
+                    </label>
+                    {showDatePicker && (
+                        <DatePicker
+                            selected={createdAt}
+                            onChange={(date: Date | null) => setCreatedAt(date)}
+                            className="text-black p-2 rounded"
+                            showTimeSelect
+                            dateFormat="Pp"
+                        />
+                    )}
+                </div>
                 <button
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"

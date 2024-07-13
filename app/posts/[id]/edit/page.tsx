@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import 'react-quill/dist/quill.snow.css';
 import { fetchPost, fetchTags, fetchTagTypes, createTag } from '@/lib/api';
 import { Post, Tag } from '@/lib/types';
@@ -43,6 +45,7 @@ export default function EditPost() {
     const [newTagType, setNewTagType] = useState<string>('');
     const [tagTypes, setTagTypes] = useState<any[]>([]);
     const [selectedTagType, setSelectedTagType] = useState<string>('');
+    const [createdAt, setCreatedAt] = useState<Date | null>(null);
 
     useEffect(() => {
         async function fetchPostData() {
@@ -51,6 +54,7 @@ export default function EditPost() {
                 setTitle(post.title);
                 setContent(post.content);
                 setSelectedTags(post.tags.map((tag: Tag) => tag.name));
+                setCreatedAt(new Date(post.created_at));
             } catch (error) {
                 console.error('Failed to fetch post:', error);
             }
@@ -115,6 +119,7 @@ export default function EditPost() {
                 body: JSON.stringify({
                     title,
                     content,
+                    created_at: createdAt?.toISOString(), // Add the created_at time
                     tags: [
                         ...selectedTags,
                         ...newTags.map((tag) => tag.name)
@@ -238,6 +243,20 @@ export default function EditPost() {
                         </div>
                     </div>
                 )}
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white ">
+                    <label className="block text-white text-sm font-bold mb-2" htmlFor="createdAt">
+                        Created At
+                    </label>
+                    <DatePicker
+                        selected={createdAt}
+                        onChange={(date) => setCreatedAt(date)}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        dateFormat="MMMM d, yyyy h:mm aa"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
 
                 <button
                     type="submit"
@@ -246,7 +265,6 @@ export default function EditPost() {
                     Update Post
                 </button>
             </form>
-
         </div>
     );
 }
