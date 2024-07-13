@@ -37,7 +37,7 @@ const CalendarView: React.FC<CalendarProps> = () => {
             try {
                 const year = getYear(date);
                 const month = getMonth(date) + 1; // getMonth returns 0-indexed month
-                const data = await fetchPosts(year, month, 1, 100); // Fetch all posts for the month
+                const data = await fetchPosts(year, month, 1, 500); // Fetch all posts for the month
                 if (Array.isArray(data.posts)) {
                     setPosts(data.posts);
                 } else {
@@ -163,10 +163,9 @@ const CalendarView: React.FC<CalendarProps> = () => {
                             ))}
                         </div>
                     </div>
-                {/*</div>*/}
+                </div>
 
-
-                {/*<div className="bg-gray-700 shadow-lg rounded-lg p-4 h-full">*/}
+                <div className="bg-gray-700 shadow-lg rounded-lg p-4 h-full">
                     <Calendar
                         tileContent={tileContent}
                         defaultView="month"
@@ -177,8 +176,8 @@ const CalendarView: React.FC<CalendarProps> = () => {
                 </div>
             </div>
             {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 overflow-y-auto">
-                    <div ref={modalRef} className="modal-container bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
+                    <div ref={modalRef} className="modal-container bg-gray-300 text-black p-6 rounded-lg shadow-lg">
                         <h2 className="text-2xl font-bold mb-4 text-center">
                             {getFormattedDate(selectedDate)}
                         </h2>
@@ -214,7 +213,15 @@ const CalendarView: React.FC<CalendarProps> = () => {
                                 ))}
                             </ul>
                         ) : (
-                            <p className="text-center">No Blog Posts for this Date.</p>
+                            <div className="flex flex-col justify-center">
+                                <p className="text-center mb-4">No Blog Posts for this Date.</p>
+                                <Link href={`/posts/new?date=${selectedDate?.toISOString()}`}
+                                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center"
+                                      style={{width: "173px", margin: "auto"}}
+                                >
+                                    + Create Post
+                                </Link>
+                            </div>
                         )}
                     </div>
                     <button

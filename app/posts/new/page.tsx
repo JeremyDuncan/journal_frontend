@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import { fetchTags, fetchTagTypes, createTag } from '@/lib/api';
@@ -46,6 +46,7 @@ export default function NewPost() {
     const [createdAt, setCreatedAt] = useState<Date | null>(new Date());
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         async function fetchTagsData() {
@@ -69,6 +70,14 @@ export default function NewPost() {
         fetchTagsData().then(r => console.log("Tag Data Fetched", r));
         fetchTagTypesData().then(r => console.log("Tag Types Fetched", r));
     }, []);
+
+    useEffect(() => {
+        const dateParam = searchParams.get('date');
+        if (dateParam) {
+            setCreatedAt(new Date(dateParam));
+            setShowDatePicker(true); // Automatically show the date picker if a date is passed
+        }
+    }, [searchParams]);
 
     const handleTagSelection = (tag: string) => {
         setSelectedTags((prevSelectedTags) =>
@@ -172,7 +181,7 @@ export default function NewPost() {
                                 <label
                                     htmlFor={tag.name}
                                     className="px-2 py-1 rounded"
-                                    style={{backgroundColor: tag.tag_type.color, color: 'white'}}>
+                                    style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
                                     {tag.name}
                                 </label>
                             </div>
