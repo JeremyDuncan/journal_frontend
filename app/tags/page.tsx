@@ -18,9 +18,11 @@ const TagsPage: React.FC = () => {
     const [editingTagType, setEditingTagType] = useState<TagType | null>(null);
     const [tagToDelete, setTagToDelete] = useState<Tag | null>(null);
     const [tagTypeToDelete, setTagTypeToDelete] = useState<TagType | null>(null);
+    const [loadingTags, setLoadingTags] = useState(true);
 
     useEffect(() => {
         async function loadTags() {
+            setLoadingTags(true);
             try {
                 const tags = await fetchTags();
                 setTags(tags);
@@ -29,6 +31,8 @@ const TagsPage: React.FC = () => {
             } catch (error) {
                 console.error('Failed to load tags or tag types:', error);
                 setError('Failed to load tags or tag types.');
+            } finally {
+                setLoadingTags(false);
             }
         }
         loadTags().catch(error => console.error('Promise returned from loadTags is ignored', error));
@@ -157,50 +161,61 @@ const TagsPage: React.FC = () => {
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
             <div className={"border tag-box bg-gray-800"}>
                 <h2 className="text-3xl font-bold mb-4 text-red">Tags</h2>
-                <div className="flex flex-col space-y-4 bg-gray-700 tag-box">
-
-                    {tagTypes.filter(tagType => tags.some(tag => tag.tag_type.id === tagType.id)).map(tagType => (
-                        <div key={tagType.id} className="bg-gray-600 p-2  rounded mb-2">
-                            <h3 className="text-xl font-bold mb-2" style={{color: tagType.color}}>{tagType.name}</h3>
-                            {tags.filter(tag => tag.tag_type.id === tagType.id).map(tag => (
-                                <div key={tag.id} className=" border-b pb-2 flex justify-between items-center mb-2">
-                                    <div className="flex items-center">
-                                        <span className="text-xl">{tag.name}</span>
+                {loadingTags ? (
+                    <div className="flex justify-center items-center mt-6">
+                        <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col space-y-4 bg-gray-700 tag-box">
+                        {tagTypes.filter(tagType => tags.some(tag => tag.tag_type.id === tagType.id)).map(tagType => (
+                            <div key={tagType.id} className="bg-gray-600 p-2  rounded mb-2">
+                                <h3 className="text-xl font-bold mb-2" style={{color: tagType.color}}>{tagType.name}</h3>
+                                {tags.filter(tag => tag.tag_type.id === tagType.id).map(tag => (
+                                    <div key={tag.id} className=" border-b pb-2 flex justify-between items-center mb-2">
+                                        <div className="flex items-center">
+                                            <span className="text-xl">{tag.name}</span>
+                                        </div>
+                                        <button
+                                            onClick={() => confirmDeleteTag(tag)}
+                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
-                                    <button
-                                        onClick={() => confirmDeleteTag(tag)}
-                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    ))}
-                </div>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
             <br/>
 
             <div className={"border tag-box bg-gray-800"}>
                 <h2 className="text-3xl font-bold mb-4">Tag Types</h2>
-                <div className="flex flex-col bg-gray-600 tag-box">
-                    {tagTypes.map((tagType) => (
-                        <div key={tagType.id} className="border-b pb-2 flex justify-between items-center  no-round">
-                            <span
-                                className="inline-block w-6 h-6 rounded cursor-pointer mr-4"
-                                style={{backgroundColor: tagType.color}}
-                                onClick={() => openColorPickerModalForExistingTagType(tagType)}
-                            ></span>
-                            <span className="text-xl flex-grow">{tagType.name}</span>
-                            <button
-                                onClick={() => confirmDeleteTagType(tagType)}
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                {loadingTags ? (
+                    <div className="flex justify-center items-center mt-6">
+                        <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col bg-gray-600 tag-box">
+                        {tagTypes.map((tagType) => (
+                            <div key={tagType.id} className="border-b pb-2 flex justify-between items-center  no-round">
+                                <span
+                                    className="inline-block w-6 h-6 rounded cursor-pointer mr-4"
+                                    style={{backgroundColor: tagType.color}}
+                                    onClick={() => openColorPickerModalForExistingTagType(tagType)}
+                                ></span>
+                                <span className="text-xl flex-grow">{tagType.name}</span>
+                                <button
+                                    onClick={() => confirmDeleteTagType(tagType)}
+                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
 

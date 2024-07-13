@@ -143,7 +143,11 @@ const SearchPage: React.FC = () => {
                 />
             </div>
 
-            {loading && <p>Loading...</p>}
+            {loading &&
+                <div className="flex justify-center items-center mt-6">
+                    <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
+                </div>
+            }
             {error && <p className="text-red-500">{error}</p>}
             <div className="mt-4">
                 {posts.map((post) => (

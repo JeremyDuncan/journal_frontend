@@ -21,9 +21,11 @@ export default function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function getPosts() {
+            setLoading(true);
             try {
                 const response = await fetchPosts(undefined, undefined, page, 5);
                 if (Array.isArray(response.posts)) {
@@ -32,6 +34,8 @@ export default function Home() {
                 }
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
+            } finally {
+                setLoading(false);
             }
         }
         getPosts().catch(error => console.error('Promise returned from getPosts is ignored', error));
@@ -119,56 +123,63 @@ export default function Home() {
                 + Create New Post
             </Link>
 
-            <ul className="space-y-4 mt-6">
-                {posts.map((post) => (
-                    <li key={post.id} className="mb-4 p-4 border rounded bg-gray-800 text-white">
-                        <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>
-                        <p className="text-2xl font-bold text-stone-400 ">{post.title}</p>
-                        <div className="text-white">
-                            {truncateHtmlContent(post.content, 300)}
-                        </div>
-                        {post.tags && post.tags.length > 0 && (
-                            <div className="mt-2">
-                                <ul className="flex flex-wrap gap-2 mt-1">
-                                    {post.tags.map((tag) => (
-                                        <li
-                                            key={tag.id}
-                                            className="px-2 py-1 rounded"
-                                            style={{backgroundColor: tag.tag_type.color, color: 'white'}}
-                                        >
-                                            {tag.name}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                        <div style={{marginTop: '10px'}} className="flex flex-wrap gap-2">
-                            <Link href={`/posts/${post.id}`} className="text-blue-300 hover:underline">Read more</Link>
-                        </div>
-                    </li>
-
-                ))}
-            </ul>
-            {posts.length > 0 && (
-                <div className="flex justify-between mt-4 items-center">
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={page === 1}
-                        className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
-                    >
-                        Previous
-                    </button>
-                    <div className="flex space-x-2">
-                        {renderPagination()}
-                    </div>
-                    <button
-                        onClick={handleNextPage}
-                        disabled={page >= totalPages}
-                        className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
-                    >
-                        Next
-                    </button>
+            {loading ? (
+                <div className="flex justify-center items-center mt-6">
+                    <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
                 </div>
+            ) : (
+                <>
+                    <ul className="space-y-4 mt-6">
+                        {posts.map((post) => (
+                            <li key={post.id} className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                                <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>
+                                <p className="text-2xl font-bold text-stone-400 ">{post.title}</p>
+                                <div className="text-white">
+                                    {truncateHtmlContent(post.content, 300)}
+                                </div>
+                                {post.tags && post.tags.length > 0 && (
+                                    <div className="mt-2">
+                                        <ul className="flex flex-wrap gap-2 mt-1">
+                                            {post.tags.map((tag) => (
+                                                <li
+                                                    key={tag.id}
+                                                    className="px-2 py-1 rounded"
+                                                    style={{ backgroundColor: tag.tag_type.color, color: 'white' }}
+                                                >
+                                                    {tag.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                                <div style={{ marginTop: '10px' }} className="flex flex-wrap gap-2">
+                                    <Link href={`/posts/${post.id}`} className="text-blue-300 hover:underline">Read more</Link>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    {posts.length > 0 && (
+                        <div className="flex justify-between mt-4 items-center">
+                            <button
+                                onClick={handlePreviousPage}
+                                disabled={page === 1}
+                                className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+                            >
+                                Previous
+                            </button>
+                            <div className="flex space-x-2">
+                                {renderPagination()}
+                            </div>
+                            <button
+                                onClick={handleNextPage}
+                                disabled={page >= totalPages}
+                                className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
