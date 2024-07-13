@@ -121,10 +121,10 @@ export default function NewPost() {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
             <h1 className="text-4xl font-bold mb-8 text-white">Create New Blog Post</h1>
             <form onSubmit={handleSubmit}>
-                <div className="mb-4">
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="title">
                         Title
                     </label>
@@ -137,7 +137,7 @@ export default function NewPost() {
                         required
                     />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="content">
                         Content
                     </label>
@@ -149,7 +149,7 @@ export default function NewPost() {
                         className="bg-white text-black"
                     />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
                     <label className="block text-white text-sm font-bold mb-2">
                         Select Existing Tags
                     </label>
@@ -174,49 +174,59 @@ export default function NewPost() {
                         ))}
                     </div>
                 </div>
-                <div className="flex flex-wrap gap-2 ">
-                    <div className="mb-4 w-fifty-percent">
-                        <label className="block text-white text-sm font-bold mb-2" htmlFor="newTagName">
-                            New Tag Name
-                        </label>
-                        <input
-                            id="newTagName"
-                            type="text"
-                            value={newTagName}
-                            onChange={(e) => setNewTagName(e.target.value)}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                    </div>
-
-                    <div className="mb-4 w-fifty-percent">
-                        <label className="block text-white text-sm font-bold mb-2" htmlFor="tagTypeDropdown">
-                            Select Tag Type
-                        </label>
-                        <select
-                            id="tagTypeDropdown"
-                            value={selectedTagType}
-                            onChange={(e) => setSelectedTagType(e.target.value)}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                        >
-                            {tagTypes.map((type) => (
-                                <option key={type.id} value={type.name}>
-                                    {type.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="flex-col vert-center mt-3">
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                    <div className="flex flex-wrap items-center space-x-2">
+                        <div className="flex-1">
+                            <label className="block text-white text-sm font-bold mb-2" htmlFor="newTagName">
+                                New Tag Name
+                            </label>
+                            <input
+                                id="newTagName"
+                                type="text"
+                                value={newTagName}
+                                onChange={(e) => setNewTagName(e.target.value)}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-white text-sm font-bold mb-2" htmlFor="tagTypeDropdown">
+                                Select Tag Type
+                            </label>
+                            <select
+                                id="tagTypeDropdown"
+                                value={selectedTagType}
+                                onChange={(e) => setSelectedTagType(e.target.value)}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                            >
+                                <option value="default">Select Tag Type</option>
+                                {tagTypes.map((type) => (
+                                    <option key={type.id} value={type.name}>
+                                        {type.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                         <button
                             type="button"
                             onClick={handleAddNewTag}
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline h-auto"
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline h-auto mt-4"
                         >
                             Add Tag
                         </button>
                     </div>
-
                 </div>
+                {newTags.length > 0 && (
+                    <div className="mt-4 bg-gray-800 border p-2">
+                        <h2 className="text-2xl font-bold text-white mb-4">New Tags</h2>
+                        <div className="bg-gray-700 rounded p-4">
+                            <ul className="list-disc font-bold list-inside text-stone-400">
+                                {newTags.map((tag, index) => (
+                                    <li key={index}>{tag.name} {tag.tagType && `(${tag.tagType})`}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
 
                 <button
                     type="submit"
@@ -225,14 +235,6 @@ export default function NewPost() {
                     Create Post
                 </button>
             </form>
-            <div className="mt-4">
-                <h2 className="text-2xl font-bold text-white mb-4">New Tags</h2>
-                <ul className="list-disc list-inside text-white">
-                    {newTags.map((tag, index) => (
-                        <li key={index}>{tag.name} {tag.tagType && `(${tag.tagType})`}</li>
-                    ))}
-                </ul>
-            </div>
         </div>
     );
 }

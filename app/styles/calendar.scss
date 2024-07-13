@@ -15,41 +15,41 @@ body {
 .react-calendar {
   width: 100%;
   height: 100%;
-  border: none;
-  background-color: $background-color;
+  background-color: $primary-dark;
   color: $text-color;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.125em;
+  border-radius: 8px;
 
   &__tile {
     position: relative;
-    background-color: $background-hover-color;
-    border: 1px solid $border-color;
-    border-radius: 4px;
+    background-color: $calendar-cell;
+    border: 4px solid $primary-dark;
+    border-radius: 8px;
     height: 13vh;
     overflow: hidden;
     color: $text-color;
     transition: background-color 0.3s ease, color 0.3s ease;
 
     &--now {
-      background: $primary-color;
+      background: white;
       color: $link-hover-color;
 
       &:hover,
       &:focus {
-        background: $primary-hover-color;
+        background: grey;
         color: $link-hover-color;
       }
     }
 
     &--active {
-      background: $primary-hover-color;
-      color: $link-hover-color;
+      //background: grey;
+      //color: $link-hover-color;
 
       &:hover,
       &:focus {
-        background: $primary-active-color;
-        color: $link-hover-color;
+        //background: white;
+        //color: $link-hover-color;
       }
     }
 
@@ -81,16 +81,22 @@ body {
     &__prev-button,
     &__prev2-button,
     &__next-button,
-    &__next2-button {
-      background-color: $background-color;
+    &__next2-button,
+    &__label {
+      background-color: $primary-medium;
       padding: 20px;
       border-radius: 8px;
-      margin-bottom: 12px;
-
+      margin: 8px 8px 18px 3px;
       &:hover {
         background-color: $background-hover-color;
         color: $link-hover-color;
       }
+      &:active {
+        background-color: $primary-medium;
+        color: white;
+
+      }
+
     }
   }
 
@@ -99,6 +105,7 @@ body {
       & > .react-calendar__year-view__months {
         & > .react-calendar__year-view__months__month:hover {
           background-color: $background-hover-color;
+
         }
       }
     }
@@ -163,7 +170,9 @@ body > main > div > div > div > div {
   display: flex;
   align-items: center;
   justify-content: center;
-
+  background-color: $primary-medium;
+  border: 4px solid $primary-dark;
+  border-radius: 8px;
   abbr {
     position: static; // Remove the absolute positioning
     padding: 0;       // Reset padding
@@ -175,6 +184,7 @@ body > main > div > div > div > div {
 .react-calendar__month-view__days__day--neighboringMonth {
   background-color: $neighboring-month-background-color;
   color: $neighboring-month-text-color;
+
 }
 
 //MODAL SECTION
@@ -192,6 +202,7 @@ body > main > div > div > div > div {
 .modal-close-button {
   position: fixed;
   left: 50%;
+  margin-top: -15px;
   transform: translateX(-50%);
   background-color: #ff0000;
   color: white;

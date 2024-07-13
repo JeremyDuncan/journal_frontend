@@ -110,7 +110,7 @@ export default function Home() {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
             <h1 className="text-4xl font-bold mb-8 text-white">Blog Post Home</h1>
             <Link href={"/posts/new"} className="text-blue-500 hover:underline mb-4 inline-block">
                 Create New Blog Post

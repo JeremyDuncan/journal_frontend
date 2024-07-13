@@ -127,18 +127,22 @@ const SearchPage: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-4xl font-bold mb-8 text-white">Search Posts</h1>
-            <input
-                type="text"
-                placeholder="Search by text, tags, or tag types..."
-                value={query}
-                onChange={(e) => {
-                    setPage(1); // Reset to first page on new search
-                    setQuery(e.target.value);
-                }}
-                className="w-full p-2 border rounded text-black"
-            />
+        <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
+
+            <div className="bg-gray-800 p-4 border rounded">
+                <h1 className="text-4xl font-bold mb-8 text-white">Search Posts</h1>
+                <input
+                    type="text"
+                    placeholder="Search by text, tags, or tag types..."
+                    value={query}
+                    onChange={(e) => {
+                        setPage(1); // Reset to first page on new search
+                        setQuery(e.target.value);
+                    }}
+                    className="w-full p-2 border rounded text-black"
+                />
+            </div>
+
             {loading && <p>Loading...</p>}
             {error && <p className="text-red-500">{error}</p>}
             <div className="mt-4">

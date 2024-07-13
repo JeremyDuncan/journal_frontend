@@ -64,11 +64,13 @@ export default function PostPage() {
                     </ul>
                 </div>
             )}
-            <h1 className="text-4xl font-bold mb-4 text-white">{post.title}</h1>
-            <div className="prose lg:prose-xl text-white">
-                <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+            <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
+                <h1 className="text-4xl font-bold mb-4 text-stone-400">{post.title}</h1>
+                <div className="prose lg:prose-xl text-white">
+                    <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+                </div>
             </div>
-            <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</p>
             <div className="flex gap-4 mt-4">
                 <Link className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href={`/posts/${id}/edit`}>
                     Edit Post

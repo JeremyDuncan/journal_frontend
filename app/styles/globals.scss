@@ -39,7 +39,19 @@ body {
 .ql-editor {
   font-size: 28px;
   min-height: 400px;
+  background-color: $input-color;
+  color: $input-text-color;
 }
+
+input, select{
+  background-color: $input-color;
+  color: $input-text-color;
+  font-weight: bold;
+  &::placeholder {
+    color: $input-text-color;
+  }
+}
+
 
 .w-fifty-percent {
   width: 40%;

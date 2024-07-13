@@ -137,34 +137,40 @@ const CalendarView: React.FC<CalendarProps> = () => {
     };
 
     return (
-        <div className="flex-grow flex justify-center items-center">
+        <div className="flex-grow flex justify-center items-center ">
             <div className="w-full h-full p-4">
-                <h1 className="text-3xl font-bold mb-4 text-center text-white">Blog Post Calendar</h1>
-                <div className="mb-4">
-                    <h2 className="text-xl font-bold mb-2 text-white">Filter by Tags</h2>
-                    <div className="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                            <div key={tag.id} className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id={tag.name}
-                                    value={tag.name}
-                                    checked={selectedTags.includes(tag.name)}
-                                    onChange={() => handleTagSelection(tag.name)}
-                                    className="mr-2"
-                                />
-                                <label htmlFor={tag.name} className="px-2 py-1 rounded" style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
-                                    {tag.name}
-                                </label>
-                            </div>
-                        ))}
+                <div className="mb-4 bg-gray-700 p-4 mt-4 rounded">
+                    <h1 className="text-3xl font-bold mb-4  text-white">Blog Post Calendar</h1>
+
+                    <div className="mb-4 bg-gray-800 p-4 mt-4 border rounded">
+                        <h2 className="text-xl font-bold mb-2 text-white">Filter by Tags</h2>
+                        <div className="flex flex-wrap gap-2">
+                            {tags.map((tag) => (
+                                <div key={tag.id} className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        id={tag.name}
+                                        value={tag.name}
+                                        checked={selectedTags.includes(tag.name)}
+                                        onChange={() => handleTagSelection(tag.name)}
+                                        className="mr-2"
+                                    />
+                                    <label htmlFor={tag.name} className="px-2 py-1 rounded"
+                                           style={{backgroundColor: tag.tag_type.color, color: 'white'}}>
+                                        {tag.name}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-                <div className="bg-gray-900 shadow-lg rounded-lg p-4 h-full">
+                {/*</div>*/}
+
+
+                {/*<div className="bg-gray-700 shadow-lg rounded-lg p-4 h-full">*/}
                     <Calendar
                         tileContent={tileContent}
                         defaultView="month"
-                        className="react-calendar custom-calendar"
+                        className="react-calendar custom-calendar border"
                         onClickDay={handleDayClick}
                         onActiveStartDateChange={handleActiveStartDateChange}
                     />
