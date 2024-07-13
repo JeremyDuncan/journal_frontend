@@ -112,10 +112,14 @@ export default function Home() {
     return (
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
             <h1 className="text-4xl font-bold mb-8 text-white">Blog Post Home</h1>
-            <Link href={"/posts/new"} className="text-blue-500 hover:underline mb-4 inline-block">
-                Create New Blog Post
+            <Link
+                href={"/posts/new"}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+                + Create New Post
             </Link>
-            <ul className="space-y-4">
+
+            <ul className="space-y-4 mt-6">
                 {posts.map((post) => (
                     <li key={post.id} className="mb-4 p-4 border rounded bg-gray-800 text-white">
                         <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>
