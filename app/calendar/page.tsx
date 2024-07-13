@@ -139,7 +139,7 @@ const CalendarView: React.FC<CalendarProps> = () => {
     return (
         <div className="flex-grow flex justify-center items-center ">
             <div className="w-full h-full p-4">
-                <div className="mb-4 bg-gray-700 p-4 mt-4 rounded">
+                <div className="mb-4 bg-gray-700 p-4  rounded">
                     <h1 className="text-3xl font-bold mb-4  text-white">Blog Post Calendar</h1>
 
                     <div className="mb-4 bg-gray-800 p-4 mt-4 border rounded">
