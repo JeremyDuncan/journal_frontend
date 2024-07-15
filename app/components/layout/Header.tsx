@@ -11,13 +11,15 @@ const Header = () => {
         <header className="bg-gray-800 text-white p-4 sticky top-0 z-50">
             <nav className="container mx-auto flex justify-between items-center">
                 <ul className="flex space-x-4">
-                    <li><Link href={"/"} className="hover:text-gray-400">Home</Link></li>
-                    {session && (
+                    {session ? (
                         <>
+                            <li><Link href={"/"} className="hover:text-gray-400">Home</Link></li>
                             <li><Link href={"/calendar"} className="hover:text-gray-400">Calendar</Link></li>
                             <li><Link href={"/search"} className="hover:text-gray-400">Search</Link></li>
                             <li><Link href={"/tags"} className="hover:text-gray-400">Tags</Link></li>
                         </>
+                    ) : (
+                        <h1 className="text-2xl">Blog Post App</h1>
                     )}
                 </ul>
                 <div className="flex items-center space-x-4">
