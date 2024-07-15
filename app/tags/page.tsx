@@ -258,15 +258,15 @@ const TagsPage: React.FC = () => {
                         <FaPlus/>
                     </div>
                     Create Tags and Tag Types
-                    <div>
+                    <div className="inline-block ml-2 text-white text-sm">
                         <FiInfo
                             data-tooltip-id="createTooltip"
-                            data-tooltip-content="Create Tags or Tag Types to be used for blog posts, and search filtering. You can choose customizable colors for Tag Types"
+                            data-tooltip-content="Create Tags or Tag Types to be used for journal entries, and search filtering. You can choose customizable colors for Tag Types"
                             className="inline-block ml-2 text-white text-sm"
                         />
                     </div>
-                </h2>sdad
-                <Tooltip id="createTooltip" style={{ maxWidth: '500px', height: '100px', whiteSpace: 'pre-wrap', zIndex: '100'  }} />
+                </h2>
+                <Tooltip id="createTooltip" style={{ maxWidth: '500px', height: '130px', whiteSpace: 'pre-wrap', zIndex: '100'  }} />
                 <div className="flex flex-col bg-gray-600 tag-box">
                     <div className="flex flex-wrap items-center space-x-2">
                         <input

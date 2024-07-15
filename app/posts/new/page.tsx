@@ -149,7 +149,7 @@ export default function NewPost() {
 
     return (
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
-            <h1 className="text-4xl font-bold mb-8 text-white">Create New Blog Post</h1>
+            <h1 className="text-4xl font-bold mb-8 text-white">Create New Journal Entry</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="title">
@@ -165,7 +165,7 @@ export default function NewPost() {
                     />
                     <FiInfo
                         data-tooltip-id="titleTooltip"
-                        data-tooltip-content="Enter the title of your post"
+                        data-tooltip-content="Enter the title of your journal entry"
                         className="absolute top-2 right-2 text-white"
                     />
                     <Tooltip id="titleTooltip" />
@@ -193,7 +193,7 @@ export default function NewPost() {
                         Select Existing Tags
                         <FiInfo
                             data-tooltip-id="existingTagsTooltip"
-                            data-tooltip-content="Select tags to associate with your post"
+                            data-tooltip-content="Select tags to associate with your journal entry"
                             className="inline-block ml-2 text-white"
                         />
                     </label>
@@ -291,10 +291,10 @@ export default function NewPost() {
                                 onChange={() => setShowDatePicker(!showDatePicker)}
                                 className="mr-2"
                             />
-                            Post for different date
+                            Use different date other than today
                             <FiInfo
                                 data-tooltip-id="dateTooltip"
-                                data-tooltip-content="Change date of post from today to different date"
+                                data-tooltip-content="Change date of journal entry from today to different date"
                                 className="inline-block ml-2 text-white"
                             />
                         </label>
@@ -313,7 +313,7 @@ export default function NewPost() {
                         type="submit"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
                     >
-                        Create Post
+                        Create Journal Entry
                     </button>
             </form>
         </div>

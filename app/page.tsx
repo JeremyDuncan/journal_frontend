@@ -116,12 +116,12 @@ export default function Home() {
 
     return (
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
-            <h1 className="text-4xl font-bold mb-8 text-white flex gap-2"><FaHome/>Blog Post Home</h1>
+            <h1 className="text-4xl font-bold mb-8 text-white flex gap-2"><FaHome/>Journal Home</h1>
             <Link
                 href={"/posts/new"}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
-                + Create New Post
+                + Create New Journal Entry
             </Link>
 
             {loading ? (

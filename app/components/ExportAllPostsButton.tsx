@@ -133,7 +133,7 @@ const ExportAllPostsButton: React.FC = () => {
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center icon-btn text-2xl"
                 disabled={loading}
                 data-tooltip-id="downloadTooltip"
-                data-tooltip-content="Download All Posts in a Word Document"
+                data-tooltip-content="Download All Journal Entries in a Word Document"
             >
                 <FaDownload />
             </button>

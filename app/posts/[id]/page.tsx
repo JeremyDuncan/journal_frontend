@@ -74,13 +74,13 @@ export default function PostPage() {
             <div className="flex gap-4 mt-4">
                 <Link className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                       href={`/posts/${id}/edit`}>
-                    Edit Post
+                    Edit Journal Entry
                 </Link>
                 <button
                     onClick={() => setShowModal(true)}
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                 >
-                    Delete Post
+                    Delete Journal Entry
                 </button>
             </div>
             {showModal && (

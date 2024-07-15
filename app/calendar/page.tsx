@@ -146,7 +146,7 @@ const CalendarView: React.FC = () => {
             <div className="w-full h-full p-4">
 
                 <div className="bg-gray-700 shadow-lg rounded-lg p-4 h-full relative">
-                    <h1 className="text-3xl font-bold mb-4 text-white flex gap-2"><FaCalendarAlt/>Blog Post Calendar</h1>
+                    <h1 className="text-3xl font-bold mb-4 text-white flex gap-2"><FaCalendarAlt/>Journal Calendar</h1>
 
                     <div className="absolute top-4 right-4">
                         <TagsSection
@@ -211,12 +211,12 @@ const CalendarView: React.FC = () => {
                             </ul>
                         ) : (
                             <div className="flex flex-col justify-center">
-                                <p className="text-center mb-4">No Blog Posts for this Date.</p>
+                                <p className="text-center mb-4">No Journal Entries for this Date.</p>
                                 <Link href={`/posts/new?date=${selectedDate?.toISOString()}`}
                                       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center"
-                                      style={{width: "173px", margin: "auto"}}
+                                      style={{width: "323px", margin: "auto"}}
                                 >
-                                    + Create Post
+                                    + Create New Journal Entry
                                 </Link>
                             </div>
                         )}
