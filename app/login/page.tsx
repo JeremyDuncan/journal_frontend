@@ -5,73 +5,67 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-
-type FormData = {
-    email: string;
-    password: string;
-};
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import {userExists, registerUser } from '@/lib/api';
+import { FormData } from "@/lib/types";
 
 const LoginRegister = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
     const router = useRouter();
     const [isRegistering, setIsRegistering] = useState(false);
-    const [userExists, setUserExists] = useState(false);
+    const [userExistsState, setUserExists] = useState(false);
     const [loading, setLoading] = useState(true);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        const checkUserExists = async () => {
+        const checkUser = async () => {
             try {
-                const res = await fetch(`${API_URL}/users/exists`);
-                const data = await res.json();
+                const data = await userExists();
                 setUserExists(data.user_exists);
-                setLoading(false); // Set loading to false after the check
+                setLoading(false);
             } catch (error) {
                 console.error('Error checking user existence:', error);
-                setLoading(false); // Ensure loading is false even if there's an error
+                setLoading(false);
             }
         };
 
-        checkUserExists().catch(error => console.error('Error checking user existence:', error));
+        checkUser().catch(error => console.error('Error checking user existence:', error));
     }, []);
 
     const handleLogin = async (data: FormData) => {
-        const result = await signIn('credentials', {
-            redirect: false,
-            email: data.email,
-            password: data.password,
-        });
+        try {
+            console.log('Attempting to login with data:', data);
 
-        if (result?.ok) {
-            router.push('/');
-        } else {
-            console.error('Login failed:', result?.error);
-            setErrorMessage('Login failed: Invalid credentials');
+            const result = await signIn('credentials', {
+                redirect: false,
+                email: data.email,
+                password: data.password,
+            });
+
+            if (result?.ok) {
+                router.push('/');
+            } else {
+                console.error('Login failed:', result?.error);
+                setErrorMessage('Login failed: Invalid credentials');
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            setErrorMessage('Login failed: An unexpected error occurred');
         }
     };
 
     const handleRegister = async (data: FormData) => {
         try {
-            const res = await fetch(`${API_URL}/users`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user: data }),
-            });
+            const response = await registerUser(data);
 
-            if (res.ok) {
+            if (response) {
                 setSuccessMessage('Registration successful! Redirecting to login...');
-                setIsRegistering(false); // Reset to show login form
+                setIsRegistering(false);
                 setTimeout(() => {
                     router.push('/login');
                 }, 3000);
             } else {
-                const errorData = await res.json();
-                setErrorMessage(errorData.error || 'Registration failed. Please try again.');
+                setErrorMessage('Registration failed. Please try again.');
             }
         } catch (error) {
             console.error('Registration failed:', error);
@@ -145,7 +139,7 @@ const LoginRegister = () => {
                 </button>
             </form>
 
-            {!userExists && !isRegistering && (
+            {!userExistsState && !isRegistering && (
                 <button
                     onClick={() => setIsRegistering(true)}
                     className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
