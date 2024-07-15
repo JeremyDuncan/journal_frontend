@@ -34,6 +34,22 @@ export async function fetchPosts(year?: number, month?: number, page: number = 1
     return await res.json();
 }
 
+export async function fetchAllPosts() {
+    const url = `${API_URL}/posts/all_posts`;
+
+    const res = await fetch(url, {
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error(`Error fetching all posts: ${res.statusText}`);
+    }
+
+    return await res.json();
+}
+
 export async function fetchPost(id: string) {
     if (!API_URL) {
         throw new Error('API_URL is not defined');
