@@ -8,6 +8,7 @@ import { Post, Tag } from '@/lib/types';
 import { isSameDay, parseISO, getYear, getMonth, format } from 'date-fns';
 import DOMPurify from "dompurify";
 import TagsSection from '../components/TagSection';
+import { FaCalendarAlt } from "react-icons/fa";
 
 const CalendarView: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -145,7 +146,7 @@ const CalendarView: React.FC = () => {
             <div className="w-full h-full p-4">
 
                 <div className="bg-gray-700 shadow-lg rounded-lg p-4 h-full relative">
-                    <h1 className="text-3xl font-bold mb-4 text-white">Blog Post Calendar</h1>
+                    <h1 className="text-3xl font-bold mb-4 text-white flex gap-2"><FaCalendarAlt/>Blog Post Calendar</h1>
 
                     <div className="absolute top-4 right-4">
                         <TagsSection

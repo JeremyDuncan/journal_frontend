@@ -7,6 +7,8 @@ import { HexColorPicker } from 'react-colorful';
 import { FaPalette } from 'react-icons/fa';
 import { FiInfo } from 'react-icons/fi';
 import { Tooltip } from 'react-tooltip';
+import {FaTags, FaPlus } from "react-icons/fa";
+import { TbTagStarred } from "react-icons/tb";
 
 const TagsPage: React.FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -162,24 +164,32 @@ const TagsPage: React.FC = () => {
     return (
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
             <div className="border tag-box bg-gray-800 relative">
-                <h2 className="text-3xl font-bold mb-4 text-red">
+                <h2 className="text-3xl font-bold mb-4 text-red flex gap-2 ">
+                    <div className="icon-margin">
+                        <FaTags/>
+                    </div>
                     Tags
-                    <FiInfo
-                        data-tooltip-id="tagsTooltip"
-                        data-tooltip-content="Created Tags organized by Tag Type"
-                        className="inline-block ml-2 text-white text-sm"
-                    />
+                    <div>
+                        <FiInfo
+                            data-tooltip-id="tagsTooltip"
+                            data-tooltip-content="Created Tags organized by Tag Type"
+                            className="inline-block ml-2 text-white text-sm"
+                        />
+                    </div>
+
                 </h2>
-                <Tooltip id="tagsTooltip" style={{ maxWidth: '500px', height: '60px', whiteSpace: 'pre-wrap', zIndex: '100' }} />
+                <Tooltip id="tagsTooltip"
+                         style={{maxWidth: '500px', height: '60px', whiteSpace: 'pre-wrap', zIndex: '100'}}/>
                 {loadingTags ? (
                     <div className="flex justify-center items-center mt-6">
-                        <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
+                        <div
+                            className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
                     </div>
                 ) : (
                     <div className="flex flex-col space-y-4 bg-gray-700 tag-box">
                         {tagTypes.filter(tagType => tags.some(tag => tag.tag_type.id === tagType.id)).map(tagType => (
                             <div key={tagType.id} className="bg-gray-600 p-2 rounded mb-2">
-                                <h3 className="text-xl font-bold mb-2" style={{ color: tagType.color }}>{tagType.name}</h3>
+                                <h3 className="text-xl font-bold mb-2" style={{color: tagType.color}}>{tagType.name}</h3>
                                 {tags.filter(tag => tag.tag_type.id === tagType.id).map(tag => (
                                     <div key={tag.id} className="border-b pb-2 flex justify-between items-center mb-2">
                                         <div className="flex items-center">
@@ -198,18 +208,24 @@ const TagsPage: React.FC = () => {
                     </div>
                 )}
             </div>
-            <br />
+            <br/>
 
             <div className="border tag-box bg-gray-800 relative">
-                <h2 className="text-3xl font-bold mb-4">
+                <h2 className="text-3xl font-bold mb-4 flex gap-2">
+                    <div className="icon-margin">
+                        <TbTagStarred/>
+                    </div>
                     Tag Type
-                    <FiInfo
-                        data-tooltip-id="tagTypeTooltip"
-                        data-tooltip-content="Created Tag Types with associated colors. Tags inherit the colors of their Tag Type"
-                        className="inline-block ml-2 text-white text-sm"
-                    />
+                    <div>
+                        <FiInfo
+                            data-tooltip-id="tagTypeTooltip"
+                            data-tooltip-content="Created Tag Types with associated colors. Tags inherit the colors of their Tag Type"
+                            className="inline-block ml-2 text-white text-sm"
+                        />
+                    </div>
                 </h2>
-                <Tooltip id="tagTypeTooltip" style={{ maxWidth: '500px', height: '85px', whiteSpace: 'pre-wrap', zIndex: '100'  }} />
+                <Tooltip id="tagTypeTooltip"
+                         style={{maxWidth: '500px', height: '85px', whiteSpace: 'pre-wrap', zIndex: '100'  }} />
                 {loadingTags ? (
                     <div className="flex justify-center items-center mt-6">
                         <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
@@ -237,13 +253,18 @@ const TagsPage: React.FC = () => {
             </div>
 
             <div className="mt-16 border tag-create-box bg-gray-800 p-4 rounded relative">
-                <h2 className="text-xl font-bold mb-4 text-aite">
+                <h2 className="text-xl font-bold mb-4 text-aite flex gap-2 ">
+                    <div className="icon-margin">
+                        <FaPlus/>
+                    </div>
                     Create Tags and Tag Types
-                    <FiInfo
-                        data-tooltip-id="createTooltip"
-                        data-tooltip-content="Create Tags or Tag Types to be used for blog posts, and search filtering. You can choose customizable colors for Tag Types"
-                        className="inline-block ml-2 text-white text-sm"
-                    />
+                    <div>
+                        <FiInfo
+                            data-tooltip-id="createTooltip"
+                            data-tooltip-content="Create Tags or Tag Types to be used for blog posts, and search filtering. You can choose customizable colors for Tag Types"
+                            className="inline-block ml-2 text-white text-sm"
+                        />
+                    </div>
                 </h2>sdad
                 <Tooltip id="createTooltip" style={{ maxWidth: '500px', height: '100px', whiteSpace: 'pre-wrap', zIndex: '100'  }} />
                 <div className="flex flex-col bg-gray-600 tag-box">

@@ -6,6 +6,7 @@ import { fetchPostsSearch } from '@/lib/api';
 import { Post } from '@/lib/types';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { FaSearch } from "react-icons/fa";
 
 const truncateHtmlContent = (html: string, maxLength: number): string => {
     const sanitizedHtml = DOMPurify.sanitize(html);
@@ -131,7 +132,7 @@ const SearchPage: React.FC = () => {
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
 
             <div className="bg-gray-800 p-4 border rounded">
-                <h1 className="text-4xl font-bold mb-8 text-white">Search Posts</h1>
+                <h1 className="text-4xl font-bold mb-8 text-white flex gap-2"><FaSearch/>Search Posts</h1>
                 <input
                     type="text"
                     placeholder="Search by text, tags, or tag types..."

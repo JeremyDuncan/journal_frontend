@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
 import DOMPurify from "dompurify";
+import { FaHome} from "react-icons/fa";
 
 const truncateHtmlContent = (html: string, maxLength: number): string => {
     const sanitizedHtml = DOMPurify.sanitize(html);
