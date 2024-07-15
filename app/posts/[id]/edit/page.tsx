@@ -8,6 +8,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import 'react-quill/dist/quill.snow.css';
 import { fetchPost, fetchTags, fetchTagTypes, createTag } from '@/lib/api';
 import { Post, Tag } from '@/lib/types';
+import { FiInfo } from 'react-icons/fi';
+import { Tooltip } from 'react-tooltip';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
@@ -153,7 +155,7 @@ export default function EditPost() {
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
             <h1 className="text-4xl font-bold mb-8 text-white">Edit Blog Post</h1>
             <form onSubmit={handleSubmit}>
-                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="title">
                         Title
                     </label>
@@ -165,8 +167,14 @@ export default function EditPost() {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                         required
                     />
+                    <FiInfo
+                        data-tooltip-id="titleTooltip"
+                        data-tooltip-content="Enter the title of your post"
+                        className="absolute top-2 right-2 text-white"
+                    />
+                    <Tooltip id="titleTooltip" />
                 </div>
-                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="content">
                         Content
                     </label>
@@ -177,11 +185,23 @@ export default function EditPost() {
                         formats={formats}
                         className="bg-white text-black"
                     />
+                    <FiInfo
+                        data-tooltip-id="contentTooltip"
+                        data-tooltip-content="Write your content here"
+                        className="absolute top-2 right-2 text-white"
+                    />
+                    <Tooltip id="contentTooltip" />
                 </div>
-                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative">
                     <label className="block text-white text-sm font-bold mb-2">
                         Select Existing Tags
+                        <FiInfo
+                            data-tooltip-id="existingTagsTooltip"
+                            data-tooltip-content="Select tags to associate with your post"
+                            className="inline-block ml-2 text-white"
+                        />
                     </label>
+                    <Tooltip id="existingTagsTooltip" />
                     <div className="flex flex-wrap gap-2">
                         {existingTags.map((tag) => (
                             <div key={tag.id} className="flex items-center">
@@ -193,54 +213,67 @@ export default function EditPost() {
                                     onChange={() => handleTagSelection(tag.name)}
                                     className="mr-2"
                                 />
-                                <label htmlFor={tag.name} className="px-2 py-1 rounded"
-                                       style={{backgroundColor: tag.tag_type.color, color: 'white'}}>
+                                <label
+                                    htmlFor={tag.name}
+                                    className="px-2 py-1 rounded"
+                                    style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
                                     {tag.name}
                                 </label>
                             </div>
                         ))}
                     </div>
                 </div>
-                <div className="mb-4 p-4 border rounded bg-gray-800 text-white">
-                    <div className="flex flex-wrap items-center space-x-2">
-                        <div className="flex-1">
-                            <label className="block text-white text-sm font-bold mb-2" htmlFor="newTagName">
-                                New Tag Name
-                            </label>
-                            <input
-                                id="newTagName"
-                                type="text"
-                                value={newTagName}
-                                onChange={(e) => setNewTagName(e.target.value)}
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative flex flex-wrap gap-2">
+                    <div className="flex flex-col">
+                        <label className="block text-white text-sm font-bold mb-2" htmlFor="newTagName">
+                            New Tag Name
+                            <FiInfo
+                                data-tooltip-id="newTagNameTooltip"
+                                data-tooltip-content="*Optional* Create new tags and add to existing tags"
+                                className="inline-block ml-2 text-white"
                             />
-                        </div>
-                        <div className="flex-1">
-                            <label className="block text-white text-sm font-bold mb-2" htmlFor="tagTypeDropdown">
-                                Select Tag Type
-                            </label>
-                            <select
-                                id="tagTypeDropdown"
-                                value={selectedTagType}
-                                onChange={(e) => setSelectedTagType(e.target.value)}
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                            >
-                                <option value="default">Select Tag Type</option>
-                                {tagTypes.map((type) => (
-                                    <option key={type.id} value={type.name}>
-                                        {type.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        </label>
+                        <Tooltip id="newTagNameTooltip"/>
+                        <input
+                            id="newTagName"
+                            type="text"
+                            value={newTagName}
+                            onChange={(e) => setNewTagName(e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                    </div>
+
+                    <div className="flex flex-col">
+                        <label className="block text-white text-sm font-bold mb-2" htmlFor="tagTypeDropdown">
+                            Select Tag Type
+                        </label>
+                        <select
+                            id="tagTypeDropdown"
+                            value={selectedTagType}
+                            onChange={(e) => setSelectedTagType(e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                        >
+                            <option value="default">Select Tag Type</option>
+                            {tagTypes.map((type) => (
+                                <option key={type.id} value={type.name}>
+                                    {type.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="flex flex-col">
+                        <label className="block text-white text-sm font-bold mb-2 opacity-0" htmlFor="tagTypeDropdown">
+                            Select Tag Type
+                        </label>
                         <button
                             type="button"
                             onClick={handleAddNewTag}
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline h-auto mt-4"
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline custom-btn-height"
                         >
                             Add Tag
                         </button>
                     </div>
+
                 </div>
                 {newTags.length > 0 && (
                     <div className="mt-4 bg-gray-800 p-2 border">
@@ -254,21 +287,34 @@ export default function EditPost() {
                         </div>
                     </div>
                 )}
-                <div className="mb-4 p-4 border rounded bg-gray-800 text-white ">
-                    <label className="block text-white text-sm font-bold mb-2" htmlFor="createdAt">
-                        Created At
+                <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative">
+                    <label className="block text-white text-sm font-bold mb-2">
+                        <input
+                            type="checkbox"
+                            checked={!!createdAt}
+                            onChange={() => setCreatedAt(createdAt ? null : new Date())}
+                            className="mr-2"
+                        />
+                        Post for different date
+                        <FiInfo
+                            data-tooltip-id="dateTooltip"
+                            data-tooltip-content="Change date of post from current date to different date"
+                            className="inline-block ml-2 text-white"
+                        />
                     </label>
-                    <DatePicker
-                        selected={createdAt}
-                        onChange={(date) => setCreatedAt(date)}
-                        showTimeSelect
-                        timeFormat="HH:mm"
-                        timeIntervals={15}
-                        dateFormat="MMMM d, yyyy h:mm aa"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-                    />
+                    <Tooltip id="dateTooltip"/>
+                    {createdAt && (
+                        <DatePicker
+                            selected={createdAt}
+                            onChange={(date) => setCreatedAt(date)}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={15}
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                    )}
                 </div>
-
                 <button
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"

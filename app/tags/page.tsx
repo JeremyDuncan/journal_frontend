@@ -5,6 +5,8 @@ import { fetchTags, fetchTagTypes, createTag, createTagType, deleteTag, deleteTa
 import { Tag, TagType } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
 import { FaPalette } from 'react-icons/fa';
+import { FiInfo } from 'react-icons/fi';
+import { Tooltip } from 'react-tooltip';
 
 const TagsPage: React.FC = () => {
     const [tags, setTags] = useState<Tag[]>([]);
@@ -159,8 +161,16 @@ const TagsPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
-            <div className={"border tag-box bg-gray-800"}>
-                <h2 className="text-3xl font-bold mb-4 text-red">Tags</h2>
+            <div className="border tag-box bg-gray-800 relative">
+                <h2 className="text-3xl font-bold mb-4 text-red">
+                    Tags
+                    <FiInfo
+                        data-tooltip-id="tagsTooltip"
+                        data-tooltip-content="Created Tags organized by Tag Type"
+                        className="inline-block ml-2 text-white text-sm"
+                    />
+                </h2>
+                <Tooltip id="tagsTooltip" style={{ maxWidth: '500px', height: '60px', whiteSpace: 'pre-wrap', zIndex: '100' }} />
                 {loadingTags ? (
                     <div className="flex justify-center items-center mt-6">
                         <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
@@ -168,10 +178,10 @@ const TagsPage: React.FC = () => {
                 ) : (
                     <div className="flex flex-col space-y-4 bg-gray-700 tag-box">
                         {tagTypes.filter(tagType => tags.some(tag => tag.tag_type.id === tagType.id)).map(tagType => (
-                            <div key={tagType.id} className="bg-gray-600 p-2  rounded mb-2">
-                                <h3 className="text-xl font-bold mb-2" style={{color: tagType.color}}>{tagType.name}</h3>
+                            <div key={tagType.id} className="bg-gray-600 p-2 rounded mb-2">
+                                <h3 className="text-xl font-bold mb-2" style={{ color: tagType.color }}>{tagType.name}</h3>
                                 {tags.filter(tag => tag.tag_type.id === tagType.id).map(tag => (
-                                    <div key={tag.id} className=" border-b pb-2 flex justify-between items-center mb-2">
+                                    <div key={tag.id} className="border-b pb-2 flex justify-between items-center mb-2">
                                         <div className="flex items-center">
                                             <span className="text-xl">{tag.name}</span>
                                         </div>
@@ -188,10 +198,18 @@ const TagsPage: React.FC = () => {
                     </div>
                 )}
             </div>
-            <br/>
+            <br />
 
-            <div className={"border tag-box bg-gray-800"}>
-                <h2 className="text-3xl font-bold mb-4">Tag Types</h2>
+            <div className="border tag-box bg-gray-800 relative">
+                <h2 className="text-3xl font-bold mb-4">
+                    Tag Type
+                    <FiInfo
+                        data-tooltip-id="tagTypeTooltip"
+                        data-tooltip-content="Created Tag Types with associated colors. Tags inherit the colors of their Tag Type"
+                        className="inline-block ml-2 text-white text-sm"
+                    />
+                </h2>
+                <Tooltip id="tagTypeTooltip" style={{ maxWidth: '500px', height: '85px', whiteSpace: 'pre-wrap', zIndex: '100'  }} />
                 {loadingTags ? (
                     <div className="flex justify-center items-center mt-6">
                         <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
@@ -199,10 +217,10 @@ const TagsPage: React.FC = () => {
                 ) : (
                     <div className="flex flex-col bg-gray-600 tag-box">
                         {tagTypes.map((tagType) => (
-                            <div key={tagType.id} className="border-b pb-2 flex justify-between items-center  no-round">
+                            <div key={tagType.id} className="border-b pb-2 flex justify-between items-center no-round">
                                 <span
                                     className="inline-block w-6 h-6 rounded cursor-pointer mr-4"
-                                    style={{backgroundColor: tagType.color}}
+                                    style={{ backgroundColor: tagType.color }}
                                     onClick={() => openColorPickerModalForExistingTagType(tagType)}
                                 ></span>
                                 <span className="text-xl flex-grow">{tagType.name}</span>
@@ -218,11 +236,17 @@ const TagsPage: React.FC = () => {
                 )}
             </div>
 
-
-            {/*################################## CREATE TAGS AND TYPES #############################################*/}
-            <div className="mt-16 border tag-create-box bg-gray-800 p-4 rounded">
-                <h2 className="text-xl font-bold mb-4 text-white">Create Tags and Tag Types</h2>
-                <div className="flex flex-col bg-gray-600 tag-box ">
+            <div className="mt-16 border tag-create-box bg-gray-800 p-4 rounded relative">
+                <h2 className="text-xl font-bold mb-4 text-aite">
+                    Create Tags and Tag Types
+                    <FiInfo
+                        data-tooltip-id="createTooltip"
+                        data-tooltip-content="Create Tags or Tag Types to be used for blog posts, and search filtering. You can choose customizable colors for Tag Types"
+                        className="inline-block ml-2 text-white text-sm"
+                    />
+                </h2>sdad
+                <Tooltip id="createTooltip" style={{ maxWidth: '500px', height: '100px', whiteSpace: 'pre-wrap', zIndex: '100'  }} />
+                <div className="flex flex-col bg-gray-600 tag-box">
                     <div className="flex flex-wrap items-center space-x-2">
                         <input
                             type="text"
@@ -231,12 +255,12 @@ const TagsPage: React.FC = () => {
                             onChange={(e) => setNewTagTypeName(e.target.value)}
                             className="border p-2 rounded text-black flex-grow"
                         />
-                        <div className="border p-2  bg-gray-100 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        <div className="border p-2 bg-gray-100 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                             <FaPalette
                                 size={24}
                                 className="cursor-pointer"
                                 onClick={openColorPickerModalForNewTagType}
-                                style={{color: newTagTypeColor}}
+                                style={{ color: newTagTypeColor }}
                             />
                         </div>
                         <button onClick={handleCreateTagType} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -244,7 +268,7 @@ const TagsPage: React.FC = () => {
                         </button>
                     </div>
 
-                    <div className="flex flex-wrap items-center space-x-2">
+                    <div className="flex flex-wrap items-center space-x-2 mt-4">
                         <input
                             type="text"
                             placeholder="Tag name"
@@ -273,8 +297,7 @@ const TagsPage: React.FC = () => {
 
             {isColorPickerOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className=" p-4 bg-gray-300 rounded shadow-lg w-full max-w-sm">
-
+                    <div className="p-4 bg-gray-300 rounded shadow-lg w-full max-w-sm">
                         <h2 className="text-xl font-bold text-black mb-4">Select Color</h2>
                         <div className="flex justify-center">
                             <HexColorPicker color={newTagTypeColor} onChange={setNewTagTypeColor} />
@@ -301,8 +324,7 @@ const TagsPage: React.FC = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
                         <h2 className="text-xl font-bold mb-4 text-black">Confirm Delete</h2>
-                        <p className="text-black">Are you sure you want to delete the
-                            tag <strong>{tagToDelete.name}</strong>?</p>
+                        <p className="text-black">Are you sure you want to delete the tag <strong>{tagToDelete.name}</strong>?</p>
                         <div className="flex justify-end mt-4 space-x-2">
                             <button
                                 onClick={handleDeleteTag}
@@ -325,8 +347,7 @@ const TagsPage: React.FC = () => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-4 rounded shadow-lg w-full max-w-sm">
                         <h2 className="text-xl font-bold mb-4 text-black">Confirm Delete</h2>
-                        <p className="text-black">Are you sure you want to delete the tag
-                            type <strong>{tagTypeToDelete.name}</strong>?</p>
+                        <p className="text-black">Are you sure you want to delete the tag type <strong>{tagTypeToDelete.name}</strong>?</p>
                         <div className="flex justify-end mt-4 space-x-2">
                             <button
                                 onClick={handleDeleteTagType}
