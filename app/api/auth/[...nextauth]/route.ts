@@ -1,8 +1,17 @@
 // app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import {User} from "@/lib/types"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+
+if (!API_KEY) {
+    throw new Error('API_KEY is not defined in environment variables');
+}
+if (!API_URL) {
+    throw new Error('API_URL is not defined in environment variables');
+}
 
 const handler = NextAuth({
     providers: [
@@ -17,6 +26,7 @@ const handler = NextAuth({
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-Api-Key': API_KEY,
                     },
                     body: JSON.stringify({
                         user: {
@@ -47,17 +57,14 @@ const handler = NextAuth({
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token = user;
+                token.user = user;
             }
             return token;
         },
         async session({ session, token }) {
-            session.user = token;
+            session.user = token.user as User;
             return session;
         },
-    },
-    session: {
-        jwt: true,
     },
 });
 
