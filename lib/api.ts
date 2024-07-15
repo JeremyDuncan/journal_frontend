@@ -1,5 +1,17 @@
+import { FormData } from "@/lib/types";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
+if (!API_KEY) {
+    throw new Error('API_KEY is not defined in environment variables');
+}
+if (!API_URL) {
+    throw new Error('API_URL is not defined in environment variables');
+}
+
+// #############################################################################
+// ###########################   POSTS   #######################################
+// #############################################################################
 export async function fetchPosts(year?: number, month?: number, page: number = 1, limit: number = 5) {
     if (!API_URL) {
         throw new Error('API_URL is not defined');
@@ -10,12 +22,16 @@ export async function fetchPosts(year?: number, month?: number, page: number = 1
         url += `&year=${year}&month=${month}`;
     }
 
-    const res = await fetch(url);
+    const res = await fetch(url, {
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
+    });
+
     if (!res.ok) {
         throw new Error(`Error fetching posts: ${res.statusText}`);
     }
-    const data = await res.json();
-    return data;
+    return await res.json();
 }
 
 export async function fetchPost(id: string) {
@@ -23,17 +39,24 @@ export async function fetchPost(id: string) {
         throw new Error('API_URL is not defined');
     }
 
-    const res = await fetch(`${API_URL}/posts/${id}`);
+    const res = await fetch(`${API_URL}/posts/${id}`, {
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
+    });
+
     if (!res.ok) {
         throw new Error(`Error fetching post: ${res.statusText}`);
     }
-    const data = await res.json();
-    return data;
+    return await res.json();
 }
 
 export async function deletePost(id: string) {
     const res = await fetch(`${API_URL}/posts/${id}`, {
         method: 'DELETE',
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
     });
 
     if (!res.ok) {
@@ -48,8 +71,17 @@ export async function deletePost(id: string) {
     return null;
 }
 
+
+// #############################################################################
+// ###########################   TAGS   ########################################
+// #############################################################################
 export async function fetchTags() {
-    const res = await fetch(`${API_URL}/tags`);
+    const res = await fetch(`${API_URL}/tags`, {
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
+    });
+
     if (!res.ok) {
         throw new Error(`Error fetching tags: ${res.statusText}`);
     }
@@ -57,7 +89,12 @@ export async function fetchTags() {
 }
 
 export async function fetchTagTypes() {
-    const res = await fetch(`${API_URL}/tags/tag_types`);
+    const res = await fetch(`${API_URL}/tags/tag_types`, {
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
+    });
+
     if (!res.ok) {
         throw new Error(`Error fetching tag types: ${res.statusText}`);
     }
@@ -70,9 +107,11 @@ export async function createTag(name: string, tagType: string) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-Api-Key': API_KEY as string,
         },
         body: JSON.stringify({ tag: { name, tag_type: tagType } }),
     });
+
     if (!res.ok) {
         throw new Error(`Error creating tag: ${res.statusText}`);
     }
@@ -87,9 +126,11 @@ export async function createTagType(name: string, color: string) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-Api-Key': API_KEY as string,
         },
         body: JSON.stringify({ tag_type: { name, color } }),
     });
+
     if (!res.ok) {
         throw new Error(`Error creating tag type: ${res.statusText}`);
     }
@@ -102,6 +143,7 @@ export async function updateTagTypeColor(id: number, color: string) {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'X-Api-Key': API_KEY as string,
         },
         body: JSON.stringify({ tag_type: { color } }),
     });
@@ -116,7 +158,11 @@ export async function updateTagTypeColor(id: number, color: string) {
 export async function deleteTag(id: number) {
     const res = await fetch(`${API_URL}/tags/${id}`, {
         method: 'DELETE',
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
     });
+
     if (!res.ok) {
         throw new Error(`Error deleting tag: ${res.statusText}`);
     }
@@ -125,13 +171,25 @@ export async function deleteTag(id: number) {
 export async function deleteTagType(id: number) {
     const res = await fetch(`${API_URL}/tags/tag_types/${id}`, {
         method: 'DELETE',
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
     });
+
     if (!res.ok) {
         throw new Error(`Error deleting tag type: ${res.statusText}`);
     }
 }
+
+// #############################################################################
+// #################   POST SEARCHING   ########################################
+// #############################################################################
 export const fetchPostsSearch = async (query: string, page: number = 1, limit: number = 5) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    const response = await fetch(`${API_URL}/posts/search?query=${encodeURIComponent(query)}&page=${page}&limit=${limit}`, {
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
+    });
 
     if (!response.ok) {
         throw new Error('Failed to search posts');
@@ -141,3 +199,36 @@ export const fetchPostsSearch = async (query: string, page: number = 1, limit: n
 };
 
 
+// #############################################################################
+// #################   AUTHENTICATION   ########################################
+// #############################################################################
+export async function userExists() {
+    const res = await fetch(`${API_URL}/users/exists`, {
+        headers: {
+            'X-Api-Key': API_KEY as string,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error(`Error checking user existence: ${res.statusText}`);
+    }
+
+    return res.json();
+}
+
+export async function registerUser(data: FormData) {
+    const res = await fetch(`${API_URL}/users`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Api-Key': API_KEY as string,
+        },
+        body: JSON.stringify({ user: data }),
+    });
+
+    if (!res.ok) {
+        throw new Error(`Error registering user: ${res.statusText}`);
+    }
+
+    return res.json();
+}
