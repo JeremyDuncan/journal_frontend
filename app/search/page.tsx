@@ -37,6 +37,7 @@ const SearchPage: React.FC = () => {
 
             try {
                 const result = await fetchPostsSearch(query, page);
+                console.log('Search results:', result); // Log the result to check data
                 setPosts(result.posts);
                 setTotalPages(result.total_pages);
             } catch (error) {
@@ -143,11 +144,11 @@ const SearchPage: React.FC = () => {
                 />
             </div>
 
-            {loading &&
+            {loading && (
                 <div className="flex justify-center items-center mt-6">
                     <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
                 </div>
-            }
+            )}
             {error && <p className="text-red-500">{error}</p>}
             <div className="mt-4">
                 {posts.map((post) => (
@@ -163,7 +164,7 @@ const SearchPage: React.FC = () => {
                                 <span
                                     key={tag.id}
                                     className="inline-block text-white px-2 py-1 rounded mr-2"
-                                    style={{backgroundColor: tag.tag_type.color}}
+                                    style={{ backgroundColor: tag.tag_type.color }}
                                 >
                                     {tag.name}
                                 </span>

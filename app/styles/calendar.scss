@@ -199,6 +199,17 @@ body > main > div > div > div > div {
   overflow-y: auto;
 }
 
+.tag-modal-container {
+  position: relative;
+  background-color: $modal-primary-dark;
+  color: black;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
 .modal-close-button {
   position: fixed;
   left: 50%;
@@ -219,3 +230,20 @@ body > main > div > div > div > div {
 .modal-close-button:active {
   background-color: #ff1a1a;
 }
+
+.relative .tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.relative:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  z-index: 1;
+}
+.tooltip-text {
+  white-space: nowrap;
+  z-index: 10;
+}
+
+

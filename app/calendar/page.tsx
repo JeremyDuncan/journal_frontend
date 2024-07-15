@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import Calendar, { CalendarProps, OnArgs } from 'react-calendar';
@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Post, Tag } from '@/lib/types';
 import { isSameDay, parseISO, getYear, getMonth, format } from 'date-fns';
 import DOMPurify from "dompurify";
+import TagsSection from '../components/TagSection';
 
 const CalendarView: React.FC<CalendarProps> = () => {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -19,19 +20,15 @@ const CalendarView: React.FC<CalendarProps> = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
-    const [loadingTags, setLoadingTags] = useState(true);
     const [loadingPosts, setLoadingPosts] = useState(true);
 
     useEffect(() => {
         async function loadTags() {
-            setLoadingTags(true);
             try {
                 const tags = await fetchTags();
                 setTags(tags);
             } catch (error) {
                 console.error('Failed to load tags:', error);
-            } finally {
-                setLoadingTags(false);
             }
         }
         loadTags().catch(error => console.error('Promise returned from loadTags is ignored', error));
@@ -144,57 +141,35 @@ const CalendarView: React.FC<CalendarProps> = () => {
     };
 
     return (
-        <div className="flex-grow flex justify-center items-center ">
-                <div className="w-full h-full p-4">
-                    <div className="mb-4 bg-gray-700 p-4  rounded">
-                        <h1 className="text-3xl font-bold mb-4  text-white">Blog Post Calendar</h1>
+        <div className="flex-grow flex justify-center items-center relative">
+            <div className="w-full h-full p-4">
 
-                        {loadingTags ? (
-                            <div className="flex justify-center items-center mt-6">
-                                <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
-                            </div>
-                        ) : (
-                            <div className="mb-4 bg-gray-800 p-4 mt-4 border rounded">
-                                <h2 className="text-xl font-bold mb-2 text-white">Filter by Tags</h2>
-                                <div className="flex flex-wrap gap-2">
-                                    {tags.map((tag) => (
-                                        <div key={tag.id} className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                id={tag.name}
-                                                value={tag.name}
-                                                checked={selectedTags.includes(tag.name)}
-                                                onChange={() => handleTagSelection(tag.name)}
-                                                className="mr-2"
-                                            />
-                                            <label htmlFor={tag.name} className="px-2 py-1 rounded"
-                                                   style={{backgroundColor: tag.tag_type.color, color: 'white'}}>
-                                                {tag.name}
-                                            </label>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    <div className="bg-gray-700 shadow-lg rounded-lg p-4 h-full">
+                <div className="bg-gray-700 shadow-lg rounded-lg p-4 h-full relative">
+                    <h1 className="text-3xl font-bold mb-4 text-white">Blog Post Calendar</h1>
 
-                        {loadingPosts ? (
-                            <div className="flex justify-center items-center mt-6">
-                                <div className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
-                            </div>
-                        ) : (
-                            <Calendar
-                                tileContent={tileContent}
-                                defaultView="month"
-                                className="react-calendar custom-calendar border"
-                                onClickDay={handleDayClick}
-                                onActiveStartDateChange={handleActiveStartDateChange}
-                            />
-                        )}
+                    <div className="absolute top-4 right-4">
+                        <TagsSection
+                            tags={tags}
+                            selectedTags={selectedTags}
+                            handleTagSelection={handleTagSelection}
+                        />
                     </div>
+                    {loadingPosts ? (
+                        <div className="flex justify-center items-center mt-6">
+                            <div
+                                className="loader border-t-4 border-b-4 border-blue-500 w-12 h-12 rounded-full animate-spin"></div>
+                        </div>
+                    ) : (
+                        <Calendar
+                            tileContent={tileContent}
+                            defaultView="month"
+                            className="react-calendar custom-calendar border"
+                            onClickDay={handleDayClick}
+                            onActiveStartDateChange={handleActiveStartDateChange}
+                        />
+                    )}
                 </div>
-
+            </div>
 
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
