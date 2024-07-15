@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Calendar, { CalendarProps, OnArgs } from 'react-calendar';
+import Calendar from 'react-calendar';
 import { fetchPosts, fetchTags } from '@/lib/api';
 import Link from 'next/link';
 import { Post, Tag } from '@/lib/types';
@@ -9,7 +9,7 @@ import { isSameDay, parseISO, getYear, getMonth, format } from 'date-fns';
 import DOMPurify from "dompurify";
 import TagsSection from '../components/TagSection';
 
-const CalendarView: React.FC<CalendarProps> = () => {
+const CalendarView: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [date, setDate] = useState<Date>(new Date());
     const [tags, setTags] = useState<Tag[]>([]);
@@ -71,7 +71,7 @@ const CalendarView: React.FC<CalendarProps> = () => {
         return filteredPosts.filter(post => isSameDay(parseISO(post.created_at), date));
     };
 
-    const tileContent: CalendarProps['tileContent'] = ({ date, view }) => {
+    const tileContent = ({ date, view }: { date: Date; view: string }) => {
         if (view === 'month') {
             const postsForDay = getPostsForDay(date);
             return (
@@ -89,16 +89,16 @@ const CalendarView: React.FC<CalendarProps> = () => {
         return null;
     };
 
-    const handleActiveStartDateChange = ({ activeStartDate }: OnArgs) => {
+    const handleActiveStartDateChange = ({ activeStartDate }: { activeStartDate: Date | null }) => {
         if (activeStartDate) {
             setDate(activeStartDate);
         }
     };
 
     const handleTagSelection = (tag: string) => {
-        setSelectedTags((prevSelectedTags) =>
+        setSelectedTags(prevSelectedTags =>
             prevSelectedTags.includes(tag)
-                ? prevSelectedTags.filter((t) => t !== tag)
+                ? prevSelectedTags.filter(t => t !== tag)
                 : [...prevSelectedTags, tag]
         );
     };
@@ -127,7 +127,7 @@ const CalendarView: React.FC<CalendarProps> = () => {
 
     const getFormattedDate = (date: Date | null) => {
         if (!date) return '';
-        return format(date, "EEEE - MMMM do, yyyy");
+        return format(date, 'EEEE - MMMM do, yyyy');
     };
 
     const truncateHtmlContent = (html: string, maxLength: number): string => {
