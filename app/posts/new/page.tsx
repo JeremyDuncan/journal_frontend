@@ -9,6 +9,16 @@ import { Tag } from '@/lib/types';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+
+if (!API_KEY) {
+    throw new Error('API_KEY is not defined in environment variables');
+}
+if (!API_URL) {
+    throw new Error('API_URL is not defined in environment variables');
+}
+
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const modules = {
@@ -107,10 +117,11 @@ export default function NewPost() {
             // Fetch updated tags to ensure they are associated with the post
             const updatedTags: Tag[] = await fetchTags();
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+            const res = await fetch(`${API_URL}/posts`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-Api-Key': API_KEY as string,
                 },
                 body: JSON.stringify({
                     title,
