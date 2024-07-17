@@ -131,6 +131,7 @@ export default function Home() {
             ) : (
                 <>
                     <ul className="space-y-4 mt-6">
+
                         {posts.map((post) => (
                             <li key={post.id} className="mb-4 p-4 border rounded bg-gray-800 text-white">
                                 <p className="text-sm text-gray-500">{format(new Date(post.created_at), "MMMM do, yyyy 'at' h:mm a")}</p>

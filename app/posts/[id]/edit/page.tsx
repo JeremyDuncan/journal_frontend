@@ -10,6 +10,7 @@ import { fetchPost, fetchTags, fetchTagTypes, createTag } from '@/lib/api';
 import { Post, Tag } from '@/lib/types';
 import { FiInfo } from 'react-icons/fi';
 import { Tooltip } from 'react-tooltip';
+import { AiOutlineClose } from 'react-icons/ai';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
@@ -51,13 +52,14 @@ export default function EditPost() {
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
     const [existingTags, setExistingTags] = useState<Tag[]>([]);
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [newTags, setNewTags] = useState<{ name: string; tagType?: string }[]>([]);
     const [newTagName, setNewTagName] = useState<string>('');
     const [newTagType, setNewTagType] = useState<string>('');
     const [tagTypes, setTagTypes] = useState<any[]>([]);
     const [selectedTagType, setSelectedTagType] = useState<string>('');
     const [createdAt, setCreatedAt] = useState<Date | null>(null);
+    const [collapsedTags, setCollapsedTags] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         async function fetchPostData() {
@@ -65,7 +67,7 @@ export default function EditPost() {
                 const post: Post = await fetchPost(id as string);
                 setTitle(post.title);
                 setContent(post.content);
-                setSelectedTags(post.tags.map((tag: Tag) => tag.name));
+                setSelectedTags(post.tags);
                 setCreatedAt(new Date(post.created_at));
             } catch (error) {
                 console.error('Failed to fetch post:', error);
@@ -76,6 +78,11 @@ export default function EditPost() {
             try {
                 const tags: Tag[] = await fetchTags();
                 setExistingTags(tags);
+                const initialCollapsedState = tags.reduce((acc, tag) => {
+                    acc[tag.tag_type.name] = true; // Set all tag types to be collapsed initially
+                    return acc;
+                }, {} as Record<string, boolean>);
+                setCollapsedTags(initialCollapsedState);
             } catch (error) {
                 console.error('Failed to fetch tags:', error);
             }
@@ -95,10 +102,10 @@ export default function EditPost() {
         fetchTagTypesData();
     }, [id]);
 
-    const handleTagSelection = (tag: string) => {
+    const handleTagSelection = (tag: Tag) => {
         setSelectedTags((prevSelectedTags) =>
-            prevSelectedTags.includes(tag)
-                ? prevSelectedTags.filter((t) => t !== tag)
+            prevSelectedTags.some((t) => t.id === tag.id)
+                ? prevSelectedTags.filter((t) => t.id !== tag.id)
                 : [...prevSelectedTags, tag]
         );
     };
@@ -110,6 +117,17 @@ export default function EditPost() {
             setNewTagType('');
             setSelectedTagType('');
         }
+    };
+
+    const handleRemoveTag = (tag: Tag) => {
+        setSelectedTags((prevSelectedTags) => prevSelectedTags.filter((t) => t.id !== tag.id));
+    };
+
+    const handleToggleCollapse = (tagType: string) => {
+        setCollapsedTags((prevState) => ({
+            ...prevState,
+            [tagType]: !prevState[tagType]
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -134,7 +152,7 @@ export default function EditPost() {
                     content,
                     created_at: createdAt?.toISOString(), // Add the created_at time
                     tags: [
-                        ...selectedTags,
+                        ...selectedTags.map((tag) => tag.name),
                         ...newTags.map((tag) => tag.name)
                     ].filter(tag => updatedTags.some((t: Tag) => t.name === tag))
                 }),
@@ -150,6 +168,14 @@ export default function EditPost() {
             console.error('Failed to update post:', error);
         }
     };
+
+    const groupedTags = existingTags.reduce((acc, tag) => {
+        if (!acc[tag.tag_type.name]) {
+            acc[tag.tag_type.name] = [];
+        }
+        acc[tag.tag_type.name].push(tag);
+        return acc;
+    }, {} as Record<string, Tag[]>);
 
     return (
         <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
@@ -193,35 +219,75 @@ export default function EditPost() {
                     <Tooltip id="contentTooltip" />
                 </div>
                 <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative">
-                    <label className="block text-white text-sm font-bold mb-2">
-                        Select Existing Tags
+                    <div className="block text-white text-sm font-bold mb-2">
+                        <h1>TAGS</h1>
                         <FiInfo
-                            data-tooltip-id="existingTagsTooltip"
-                            data-tooltip-content="Select tags to associate with your journal entry"
-                            className="inline-block ml-2 text-white"
+                            data-tooltip-id={`tagTooltip`}
+                            data-tooltip-content={`Select Tags for your journal`}
+                            className="absolute top-2 right-2 text-white"
                         />
-                    </label>
-                    <Tooltip id="existingTagsTooltip" />
-                    <div className="flex flex-wrap gap-2">
-                        {existingTags.map((tag) => (
-                            <div key={tag.id} className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id={tag.name}
-                                    value={tag.name}
-                                    checked={selectedTags.includes(tag.name)}
-                                    onChange={() => handleTagSelection(tag.name)}
-                                    className="mr-2"
-                                />
-                                <label
-                                    htmlFor={tag.name}
-                                    className="px-2 py-1 rounded"
-                                    style={{ backgroundColor: tag.tag_type.color, color: 'white' }}>
-                                    {tag.name}
-                                </label>
-                            </div>
-                        ))}
+                        <Tooltip id={`tagTooltip`} />
                     </div>
+                    {selectedTags.length > 0 && (
+                        <div className="mb-4 p-4 border rounded bg-gray-700 text-white relative">
+                            <h2 className="text-xl font-bold mb-2">Selected Tags</h2>
+                            <div className="flex flex-wrap gap-2">
+                                {selectedTags.map((tag) => (
+                                    <div className="flex gap-0">
+                                        <div key={tag.id} className="flex items-center bg-gray-600 px-2 py-1 rounded-l" style={{ backgroundColor: tag.tag_type.color }}>
+                                            <span>{tag.name}</span>
+                                        </div>
+                                        <div className="bg-gray-300 hover:bg-gray-800 cursor-pointer pl-0 pt-2 pr-2 rounded-r"
+                                             onClick={() => handleRemoveTag(tag)}
+                                        >
+                                        <AiOutlineClose
+                                            className="ml-2 text-red-500"
+                                        />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {Object.entries(groupedTags).map(([tagType, tags]) => (
+                        <div key={tagType} className="mb-2 p-4 pt-2 rounded bg-gray-700 text-white relative">
+                            <div
+                                className="flex items-center justify-between mb-2 border-b border-gray-600 cursor-pointer"
+                                onClick={() => handleToggleCollapse(tagType)}
+                            >
+                                <span
+                                    className="mt-0 p-0"
+                                    style={{ textShadow: `2px 2px 4px ${tags[0].tag_type.color}`, color: 'white' }}
+                                >
+                                    {tagType}
+                                </span>
+                                <span>{collapsedTags[tagType] ? '▼' : '▲'}</span>
+                            </div>
+                            {!collapsedTags[tagType] && (
+                                <div className="flex flex-wrap gap-2">
+                                    {tags.map((tag) => (
+                                        <div key={tag.id} className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                id={tag.name}
+                                                value={tag.name}
+                                                checked={selectedTags.some((t) => t.id === tag.id)}
+                                                onChange={() => handleTagSelection(tag)}
+                                                className="mr-2"
+                                            />
+                                            <label
+                                                htmlFor={tag.name}
+                                                className="px-2 py-1 rounded"
+                                                style={{ backgroundColor: tag.tag_type.color, color: 'white' }}
+                                            >
+                                                {tag.name}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
                 <div className="mb-4 p-4 border rounded bg-gray-800 text-white relative flex flex-wrap gap-2">
                     <div className="flex flex-col">
@@ -233,7 +299,7 @@ export default function EditPost() {
                                 className="inline-block ml-2 text-white"
                             />
                         </label>
-                        <Tooltip id="newTagNameTooltip"/>
+                        <Tooltip id="newTagNameTooltip" />
                         <input
                             id="newTagName"
                             type="text"
@@ -273,7 +339,6 @@ export default function EditPost() {
                             Add Tag
                         </button>
                     </div>
-
                 </div>
                 {newTags.length > 0 && (
                     <div className="mt-4 bg-gray-800 p-2 border">
@@ -281,7 +346,9 @@ export default function EditPost() {
                         <div className="bg-gray-700 rounded p-4">
                             <ul className="list-disc font-bold list-inside text-stone-400">
                                 {newTags.map((tag, index) => (
-                                    <li key={index}>{tag.name} {tag.tagType && `(${tag.tagType})`}</li>
+                                    <li key={index}>
+                                        {tag.name} {tag.tagType && `(${tag.tagType})`}
+                                    </li>
                                 ))}
                             </ul>
                         </div>
@@ -302,7 +369,7 @@ export default function EditPost() {
                             className="inline-block ml-2 text-white"
                         />
                     </label>
-                    <Tooltip id="dateTooltip"/>
+                    <Tooltip id="dateTooltip" />
                     {createdAt && (
                         <DatePicker
                             selected={createdAt}
