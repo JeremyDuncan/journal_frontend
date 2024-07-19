@@ -191,8 +191,8 @@ body > main > div > div > div > div {
 .modal-container {
   position: relative;
   padding: 20px;
-  max-height: 70vh;
-  overflow-y: auto !important;
+  max-height: 40vh;
+  overflow-y: auto;
   width: 1200px;
 }
 
@@ -207,17 +207,30 @@ body > main > div > div > div > div {
   overflow-y: auto;
 }
 
+.flex-modal-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-height: 74%;
+  padding: 8px;
+  margin-top: 2%;
+  width: 1200px;
+  //margin-bottom: 20px;
+}
+
+.modal-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
 .modal-close-button {
-  position: fixed;
-  left: 50%;
+  align-self: center;
   margin-top: 10px;
-  transform: translateX(-50%);
   background-color: #ff0000;
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  z-index: 10;
 }
 
 .modal-close-button:hover {
