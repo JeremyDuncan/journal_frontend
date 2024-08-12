@@ -95,16 +95,6 @@ This page allows users to view detailed entries of their journal posts. It displ
 ### Calendar Page (`app/calendar/page.tsx`)
 The calendar page offers a calendar view of blog posts, allowing users to see which posts were made on specific dates. It supports filtering by tags and displays posts in a modal when a date is clicked. The page uses a combination of React hooks and third-party libraries like `react-calendar` and `date-fns` to manage state and format dates.
 
-```typescript
-import React, { useState, useEffect, useRef } from 'react';
-import Calendar from 'react-calendar';
-// Additional imports...
-const CalendarView: React.FC = () => {
-    // Component logic...
-};
-export default CalendarView;
-```
-
 ![Calendar Page](public/4_calendar.webp)
 
 ### Search Page (`app/search/page.tsx`)
