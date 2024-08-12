@@ -78,12 +78,12 @@ The homepage displays a list of blog posts, supports pagination, and includes a 
 
 ```typescript
 export default function Home() {
-// State and logic for fetching posts and rendering pagination
-return (
-<div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
-{/* Page content */}
-</div>
-);
+    // State and logic for fetching posts and rendering pagination
+    return (
+        <div className="container mx-auto p-4 bg-gray-700 mt-4 mb-4 rounded">
+        {/* Page content */}
+        </div>
+    );
 }
 ```
 
@@ -128,19 +128,19 @@ This configuration file customizes Tailwind CSS for the project. It extends the 
 
 ```typescript
 const config: Config = {
-theme: {
-extend: {
-typography: (theme) => ({
-DEFAULT: {
-css: {
-color: theme('colors.white'),
-// Additional style overrides
-},
-},
-}),
-},
-},
-plugins: [require('@tailwindcss/typography')],
+    theme: {
+        extend: {
+            typography: (theme) => ({
+                DEFAULT: {
+                    css: {
+                        color: theme('colors.white'),
+                        // Additional style overrides
+                    },
+                },
+            }),
+        },
+    },
+    plugins: [require('@tailwindcss/typography')],
 };
 export default config;
 ```
